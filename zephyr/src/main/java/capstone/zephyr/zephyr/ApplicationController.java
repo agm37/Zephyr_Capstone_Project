@@ -8,7 +8,7 @@ public class ApplicationController {
 
 	@RequestMapping("/")
 	public String index() {
-		return "Greetings from Spring Boot!";
+		return "Greetings from the Zephyr";
 	}
 
 }

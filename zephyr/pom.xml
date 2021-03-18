@@ -12,7 +12,7 @@
 	<artifactId>zephyr</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>zephyr</name>
-	<description>Zephyr project for Spring Boot</description>
+	<description>Zephyr project</description>
 	<properties>
 		<java.version>15</java.version>
 	</properties>
