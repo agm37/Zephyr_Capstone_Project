@@ -1,9 +1,7 @@
 package capstone.zephyr.zephyr.model;
 
 import java.util.UUID;
-import org.springframework.boot.jackson.JsonComponent;
 
-@JsonComponent
 public class User {
     
     private final UUID id;
