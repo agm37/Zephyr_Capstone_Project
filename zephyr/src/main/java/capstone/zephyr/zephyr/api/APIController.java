@@ -13,6 +13,7 @@ public class APIController {
 
   private static final String template = "Hello, %s!";
   private final AtomicLong counter = new AtomicLong();
+  private DatabaseAccess credentialQuery = new DatabaseAccess();
 
   @GetMapping("/zephyr")
   @ResponseBody
@@ -23,7 +24,6 @@ public class APIController {
   @GetMapping("/credentials")
   @ResponseBody
   public APIRequests returnCredentials(@RequestParam(name="name", required=false, defaultValue="Error") String user_name) {
-    DatabaseAccess credentialQuery = new DatabaseAccess();
     user_name = credentialQuery.getQueryResult();
     return new APIRequests(counter.incrementAndGet(), String.format(user_name));
   }

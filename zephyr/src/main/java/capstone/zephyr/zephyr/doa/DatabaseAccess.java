@@ -9,17 +9,18 @@ import org.springframework.stereotype.Service;
 public class DatabaseAccess {
     @Autowired
     private JdbcTemplate databaseTemplate;
-    private String finalResult;
+    private String queryResult;
 
-    public DatabaseAccess() {
+    public void queryDatabase() {
         String sqlString = "SELECT user_name, user_password FROM company_logins WHERE user_name = 'admin';";
 
-        SqlRowSet queryResult = databaseTemplate.queryForRowSet(sqlString);
-        finalResult = queryResult.getNString(1);
-        System.out.println(finalResult);
+        SqlRowSet queryRow = databaseTemplate.queryForRowSet(sqlString);
+        queryResult = queryRow.getNString(1);
+
+        System.out.println(queryResult);
     }
 
     public String getQueryResult() {
-        return finalResult;
+        return queryResult;
     }
 }
