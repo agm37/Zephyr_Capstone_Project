@@ -10,13 +10,9 @@ public class DatabaseAccess {
     private JdbcTemplate databaseTemplate;
     private String queryResult;
 
-    public void queryDatabase() {
-        String sqlString = "SELECT user_name FROM company_logins WHERE company_id = 1;";
-
-        queryResult = databaseTemplate.queryForObject(sqlString, String.class);
-    }
-
-    public String getQueryResult() {
+    public String queryDatabase(String name) {
+        String sqlString = "SELECT user_name FROM company_logins WHERE user_name = ?;";
+        queryResult = databaseTemplate.queryForObject(sqlString, String.class, name);
         return queryResult;
     }
 }
