@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,13 +26,13 @@ public class APIController {
     return new APIRequests(counter.incrementAndGet(), String.format(template, name));
   }
 
-  @GetMapping("/credentials")
+  @GetMapping("/credentials/{name}")
   @ResponseBody
-  public APIRequests returnCredentials(@RequestParam(name="name", required=false, defaultValue="Error") String user_name) {
-    credentialQuery.queryDatabase();
-    user_name = credentialQuery.getQueryResult();
+  public APIRequests returnCredentials(@PathVariable String name) {
+    String user_name = credentialQuery.queryDatabase(name);
     return new APIRequests(counter.incrementAndGet(), String.format(user_name));
   }
+<<<<<<< HEAD
 
   @PostMapping("/authentication")
   @ResponseBody
@@ -39,4 +40,7 @@ public class APIController {
     return new APIRequests(counter.incrementAndGet(), String.format(name));
   }
 
+=======
+  
+>>>>>>> c2cc2888a2df80776727c43a4d04ca2d6040e8ea
 }
