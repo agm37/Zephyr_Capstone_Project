@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import capstone.zephyr.zephyr.doa.DatabaseAccess;
 
@@ -30,6 +31,12 @@ public class APIController {
     credentialQuery.queryDatabase();
     user_name = credentialQuery.getQueryResult();
     return new APIRequests(counter.incrementAndGet(), String.format(user_name));
+  }
+
+  @PostMapping("/authentication")
+  @ResponseBody
+  public APIRequests authenticate(@RequestParam(name="name", required=false, defaultValue="You don't know who you are, and neither do we") String name) {
+    return new APIRequests(counter.incrementAndGet(), String.format(name));
   }
 
 }

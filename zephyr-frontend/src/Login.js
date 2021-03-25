@@ -21,7 +21,9 @@ class Login extends Component {
         event.preventDefault();
         event.stopPropagation();
 
-        const request = new Request(`${process.env.REACT_APP_SERVER}/zephyr/api`, {  //not sure this is the correct route
+        console.log("username:" + this.state.username)
+
+        const request = new Request(`${process.env.REACT_APP_SERVER}/authentication`, {  //not sure this is the correct route
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -33,20 +35,16 @@ class Login extends Component {
             })
         }) 
 
-        fetch(request).then(response => {
-            console.log(response)
-            // if(!response) { 
-            //     return response 
-            // }
-            // return response.json()
-        })
+        let response = await fetch(request)
+        let content = response.json()
+        console.log(content)
 
 
 
     }
 
     handleChange(event) {
-        this.setState({[event.target.name]: event.targe.value});
+        this.setState({[event.target.name]: event.target.value});
     }
 
     render() {

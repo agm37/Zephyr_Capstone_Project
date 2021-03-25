@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import VotingPage from './VotingPage';
+import Login from './Login'
 
 function App() {
     return (
@@ -36,6 +37,22 @@ function App() {
                         path="/votingpage"
                         component={VotingPage}
                     />
+
+                    <a
+                        className="App-link"
+                        href="/login"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Login
+                    </a>
+
+                    <Route
+                        exact={true}
+                        path="/login"
+                        component={Login}
+                    />
+
                 </header>
             </div>
         </Router>
