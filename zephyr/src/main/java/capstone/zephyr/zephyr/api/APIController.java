@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import capstone.zephyr.zephyr.doa.DatabaseAccess;
+
 @Controller
 public class APIController {
 
@@ -17,4 +19,13 @@ public class APIController {
   public APIRequests sayHello(@RequestParam(name="name", required=false, defaultValue="Stranger") String name) {
     return new APIRequests(counter.incrementAndGet(), String.format(template, name));
   }
+
+  @GetMapping("/credentials")
+  @ResponseBody
+  public APIRequests returnCredentials(@RequestParam(name="name", required=false, defaultValue="Error") String user_name) {
+    DatabaseAccess credentialQuery = new DatabaseAccess();
+    user_name = credentialQuery.getQueryResult();
+    return new APIRequests(counter.incrementAndGet(), String.format(user_name));
+  }
+
 }
