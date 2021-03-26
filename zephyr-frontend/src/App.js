@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import VotingPage from './VotingPage';
-import Login from './Login'
+import LoginPage from './LoginPage'
 
 function App() {
     return (
@@ -50,7 +50,7 @@ function App() {
                     <Route
                         exact={true}
                         path="/login"
-                        component={Login}
+                        component={LoginPage}
                     />
 
                 </header>
