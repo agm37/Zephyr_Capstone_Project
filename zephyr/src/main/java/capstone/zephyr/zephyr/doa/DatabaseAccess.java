@@ -10,10 +10,18 @@ public class DatabaseAccess {
     private JdbcTemplate databaseTemplate;
     private String queryResult;
 
-    public String queryDatabase(String name) {
+    public String queryUserName(String content) {
 
-        String sqlString = "SELECT user_name FROM company_logins WHERE company_id = ?;";
-        queryResult = databaseTemplate.queryForObject(sqlString, String.class, name);
+        String sqlString = "SELECT user_name FROM company_logins WHERE user_name = ?;";
+        queryResult = databaseTemplate.queryForObject(sqlString, String.class, content);
+        
+        return queryResult;
+    }
+
+    public String queryPassword(String content) {
+
+        String sqlString = "SELECT user_password FROM company_logins WHERE user_password = ?;";
+        queryResult = databaseTemplate.queryForObject(sqlString, String.class, content);
         
         return queryResult;
     }

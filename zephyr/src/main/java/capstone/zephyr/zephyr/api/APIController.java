@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import capstone.zephyr.zephyr.doa.DatabaseAccess;
+import capstone.zephyr.zephyr.doa.LoginRequest;
 
 @Controller
 public class APIController {
@@ -34,9 +36,21 @@ public class APIController {
   }
 
   @PostMapping("/authentication")
-  @ResponseBody
-  public APIRequests authenticate(@RequestParam(name="name", required=false, defaultValue="You don't know who you are, and neither do we") String name) {
-    return new APIRequests(counter.incrementAndGet(), String.format(name));
-  }
+    @ResponseBody
+    public APIRequests authenticate(@RequestBody LoginRequest request) {
+        
+        boolean response = false;
+        String message = "Not authenticated";
+
+        if (request.GetUserName() == request.GetQuery().queryUserName(request.GetUserName())) {
+            if (request.GetPassword() == request.GetQuery().queryPassword(request.GetUserName())) {
+                
+                response = true;
+                message = "Correctly authenticated";
+            }
+        }
+
+        return new APIRequests(response, message);
+    }
 
 }
