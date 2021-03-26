@@ -42,8 +42,8 @@ public class APIController {
         boolean response = false;
         String message = "Not authenticated";
 
-        if (request.GetUserName() == request.GetQuery().queryDatabase(request.GetUserName())) {
-            if (request.GetPassword() == request.GetQuery().queryDatabase(request.GetUserName())) {
+        if (request.GetUserName() == request.GetQuery().queryUserName(request.GetUserName())) {
+            if (request.GetPassword() == request.GetQuery().queryPassword(request.GetUserName())) {
                 
                 response = true;
                 message = "Correctly authenticated";
