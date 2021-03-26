@@ -10,21 +10,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import capstone.zephyr.zephyr.doa.DatabaseAccess;
 import capstone.zephyr.zephyr.doa.LoginRequest;
 
 @Controller
 public class APIController {
 
-  private static final String template = "Hello, %s!";
-  private final AtomicLong counter = new AtomicLong();
   @Autowired
   private DatabaseAccess credentialQuery;
+  private final AtomicLong counter = new AtomicLong();
 
   @GetMapping("/zephyr")
   @ResponseBody
   public APIRequests sayHello(@RequestParam(name="name", required=false, defaultValue="Stranger") String name) {
+    String template = "Hello, %s!";
     return new APIRequests(counter.incrementAndGet(), String.format(template, name));
   }
 
@@ -36,18 +35,17 @@ public class APIController {
   }
 
   @PostMapping("/authentication")
-    @ResponseBody
-    public APIRequests authenticate(@RequestBody LoginRequest request) {
+  @ResponseBody
+  public APIRequests authenticate(@RequestBody LoginRequest request) {
 
-        boolean response = false;
-        String message = "Not authenticated";
+    boolean response = false;
+    String message = "Not authenticated";
 
-        if (request.GetPassword().equals(credentialQuery.queryPasswordForUserName(request.GetUserName()))) {
-            response = true;
-            message = "Correctly authenticated";
-        }
-
-        return new APIRequests(response, message);
+    if (request.GetPassword().equals(credentialQuery.queryPasswordForUserName(request.GetUserName()))) {
+      response = true;
+      message = "Correctly authenticated";
     }
+    return new APIRequests(response, message);
+  }
 
 }
