@@ -26,17 +26,9 @@ public class APIController {
     return new APIRequests(counter.incrementAndGet(), String.format(template, name));
   }
 
-  @GetMapping("/credentials/{name}")
-  @ResponseBody
-  public APIRequests returnCredentials(@PathVariable String name) {
-    String user_name = credentialQuery.queryDatabase(name);
-    return new APIRequests(counter.incrementAndGet(), String.format(user_name));
-  }
-
   @PostMapping("/authentication")
   @ResponseBody
   public APIRequests authenticate(@RequestParam(name="name", required=false, defaultValue="You don't know who you are, and neither do we") String name) {
     return new APIRequests(counter.incrementAndGet(), String.format(name));
   }
-
 }
