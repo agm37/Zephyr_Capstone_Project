@@ -31,7 +31,7 @@ public class APIController {
   @GetMapping("/credentials/{name}")
   @ResponseBody
   public APIRequests returnCredentials(@PathVariable String name) {
-    String user_name = credentialQuery.queryDatabase(name);
+    String user_name = credentialQuery.queryUserName(name);
     return new APIRequests(counter.incrementAndGet(), String.format(user_name));
   }
 
