@@ -38,16 +38,13 @@ public class APIController {
   @PostMapping("/authentication")
     @ResponseBody
     public APIRequests authenticate(@RequestBody LoginRequest request) {
-        
+
         boolean response = false;
         String message = "Not authenticated";
 
-        if (request.GetUserName() == request.GetQuery().queryUserName(request.GetUserName())) {
-            if (request.GetPassword() == request.GetQuery().queryPassword(request.GetUserName())) {
-                
-                response = true;
-                message = "Correctly authenticated";
-            }
+        if (request.GetPassword().equals(credentialQuery.queryPasswordForUserName(request.GetUserName()))) {
+            response = true;
+            message = "Correctly authenticated";
         }
 
         return new APIRequests(response, message);

@@ -1,20 +1,23 @@
 import { Component } from 'react';
 import './App.css';
 
+const LoginResult = {
+    SUCCESS: 'success',
+    FAILURE: 'failure',
+    ERROR: 'error',
+};
+
 class Login extends Component {
     constructor(props) {
         super(props);
-        this.state = { 
+        this.state = {
             username: '',
-            password: ''
+            password: '',
          };
-
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
-
-
 
     async handleSubmit(event) {
 
@@ -23,24 +26,29 @@ class Login extends Component {
 
         console.log("username:" + this.state.username)
 
-        const request = new Request(`${process.env.REACT_APP_SERVER}/authentication`, {  //not sure this is the correct route
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: this.state.username,
-                password: this.state.password
+        let result;
+        try {
+            let response = await fetch(`${process.env.REACT_APP_SERVER}/authentication`, {  //not sure this is the correct route
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: this.state.username,
+                    password: this.state.password
+                })
             })
-        }) 
 
-        let response = await fetch(request)
-        let content = response.json()
-        console.log(content)
+            let content = await response.json()
+            console.log(content);
+            result = content.response ? LoginResult.SUCCESS : LoginResult.FAILURE;
+        } catch (ex) {
+            result = LoginResult.ERROR;
+            console.error(ex);
+        }
 
-
-
+        this.props.onLoginResult(result);
     }
 
     handleChange(event) {
@@ -50,7 +58,7 @@ class Login extends Component {
     render() {
         return (
             <div>
-            <form onSubmit={this.handleSubmit}>     
+            <form onSubmit={this.handleSubmit}>
                 <h1>
                     Login
                 </h1>
@@ -58,27 +66,21 @@ class Login extends Component {
                     Username :
                 </label>
                 <br/>
-                <input name="username" type="text" value={this.state.username} required onChange={this.handleChange} />
+                <input data-testid="username" name="username" type="text" value={this.state.username} required onChange={this.handleChange} />
                 <br/>
                 <label>
                     Password:
                 </label>
                 <br/>
-                <input name="password" type="text" value={this.state.password} required onChange={this.handleChange} />
+                <input data-testid="password" name="password" type="text" value={this.state.password} required onChange={this.handleChange} />
                 <br/>
 
-
-                <input type="submit" value="Submit"/>
+                <input data-testid="submit" type="submit" value="Submit"/>
             </form>
             </div>
-    
         );
     }
-
- 
-
-
-
 }
 
 export default Login;
+export { LoginResult };
