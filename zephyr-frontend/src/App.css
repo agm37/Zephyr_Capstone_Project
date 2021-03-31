@@ -1,5 +1,7 @@
 .App {
     text-align: center;
+
+    --border-radius: 8px;
 }
 
 .App-logo {
@@ -13,8 +15,48 @@
     }
 }
 
+button,
+input[type='submit'] {
+    background-color: #014222;
+    border: none;
+    border-radius: var(--border-radius);
+    color: white;
+    font-size: 24px;
+    padding: 8px 24px;
+    margin: 16px;
+}
+
+button:hover,
+input[type='submit']:hover {
+    background-color: #005229;
+}
+
+button:active,
+input[type='submit']:active {
+    background-color: #006433;
+}
+
+.form-input-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px;
+}
+
+.form-input-wrapper label {
+    margin-right: 8px;
+}
+
+.form-input-wrapper input[type='text'],
+.form-input-wrapper input[type='password'] {
+    border-radius: var(--border-radius);
+    border: none;
+    padding: 8px;
+}
+
 .App-header {
-    background-color: #282c34;
+    background-color: #15171c;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -22,6 +64,11 @@
     justify-content: center;
     font-size: calc(10px + 2vmin);
     color: white;
+    font-family: Nunito, sans-serif;
+}
+
+.App-header h1 {
+    font-size: 64px;
 }
 
 .App-link {
