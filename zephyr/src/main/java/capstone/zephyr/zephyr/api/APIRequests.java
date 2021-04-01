@@ -6,6 +6,7 @@ public class APIRequests {
       private String content;
       private boolean response;
       private String message;
+      private int shares;
 
       public APIRequests(long id, String content) {
         this.id = id;
@@ -15,6 +16,10 @@ public class APIRequests {
       public APIRequests(boolean response, String message) {
         this.response = response;
         this.message = message;
+      }
+
+      public APIRequests(int shares) {
+        this.shares = shares;
       }
 
       public long getId() {
