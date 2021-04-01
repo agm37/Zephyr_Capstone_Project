@@ -62,18 +62,18 @@ class Login extends Component {
                 <h1>
                     Login
                 </h1>
-                <label>
-                    Username :
-                </label>
-                <br/>
-                <input data-testid="username" name="username" type="text" value={this.state.username} required onChange={this.handleChange} />
-                <br/>
-                <label>
-                    Password:
-                </label>
-                <br/>
-                <input data-testid="password" name="password" type="text" value={this.state.password} required onChange={this.handleChange} />
-                <br/>
+                <div class="form-input-wrapper">
+                    <label for="username">Username</label>
+                    <input
+                        data-testid="username" name="username" type="text"
+                        value={this.state.username} required onChange={this.handleChange} />
+                </div>
+                <div class="form-input-wrapper">
+                    <label for="password">Password</label>
+                    <input
+                        data-testid="password" name="password" type="password"
+                        value={this.state.password} required onChange={this.handleChange} />
+                </div>
 
                 <input data-testid="submit" type="submit" value="Submit"/>
             </form>
