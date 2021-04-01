@@ -48,4 +48,11 @@ public class APIController {
     return new APIRequests(response, message);
   }
 
+  /*@PostMapping("/voting")
+  @ResponseBody
+  public APIRequests returnShares(@RequestBody) {
+
+    
+    return new APIRequests(shares);
+  }*/
 }

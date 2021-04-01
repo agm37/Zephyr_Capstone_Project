@@ -29,4 +29,19 @@ public class DatabaseAccess {
         String sqlString = "SELECT user_password FROM company_logins WHERE user_name = ?;";
         return queryForObjectOrNull(sqlString, String.class, content);
     }
+
+    public String queryUserShares(String content) {
+        String sqlString = "SELECT num_shares FROM shareholder_info WHERE shareholder_name = ?;";
+        return queryForObjectOrNull(sqlString, String.class, content);
+    }
+
+    public String queryShareholderName(String content) {
+        String sqlString = "SELECT shareholder_name FROM shareholder_info WHERE shareholder_name = ?;";
+        return queryForObjectOrNull(sqlString, String.class, content);
+    }
+
+    public String queryShareholderCompany(String content) {
+        String sqlString = "SELECT company_name FROM shareholder_info WHERE shareholder_name = ?;";
+        return queryForObjectOrNull(sqlString, String.class, content);
+    }
 }
