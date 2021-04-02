@@ -49,7 +49,7 @@ public class APIController {
 
     if (authenticatePassword == 1) {
       response = true;
-      message = "Correctly authenticated";
+      message = "Successfully authenticated";
     }
     return new APIRequests(response, message);
   }
