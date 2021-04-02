@@ -25,8 +25,18 @@ public class DatabaseAccess {
         return queryForObjectOrNull(sqlString, String.class, content);
     }
 
-    public String queryPasswordForUserName(String content) {
+    public String queryUserPassword(String content) {
         String sqlString = "SELECT user_password FROM company_logins WHERE user_name = ?;";
+        return queryForObjectOrNull(sqlString, String.class, content);
+    }
+
+    public int queryPasswordAuthenticate(String content) {
+        String sqlString = "SELECT Count(*) FROM company_logins WHERE SHA(CONCAT(SUBSTRING(hashed_password, 1, 8), ?)) = SUBSTRING(hashed_password, 9, 40);";
+        return queryForObjectOrNull(sqlString, Integer.class, content);
+    }
+
+    public String queryPasswordSalt(String content) {
+        String sqlString = "SELECT password_salt FROM company_logins WHERE user_name = ?;";
         return queryForObjectOrNull(sqlString, String.class, content);
     }
 
