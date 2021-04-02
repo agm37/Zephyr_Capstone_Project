@@ -1,14 +1,15 @@
 package capstone.zephyr.zephyr;
 
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.*;
 
 import java.net.URI;
-import java.net.http.HttpHeaders;
 import java.util.Base64;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -37,7 +38,7 @@ public class SpringSessionApplicationTest {
   String sessionId1 = firstResponse.getBody();
   String cookie = firstResponse.getHeaders().getFirst("Set-Cookie");
   String sessionId2 = nextRequest(restTemplate, uri, cookie).getBody();
-  assertThat(sessionId1).isEqualTo(sessionId2);
+  assertThat(sessionId1, is(equalTo(5)));
 
  }
 
