@@ -44,8 +44,8 @@ public class ZephyrSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
             .exceptionHandling()
-                .authenticationEntryPoint(errorHandler)
-                .accessDeniedHandler(errorHandler);
+                .authenticationEntryPoint(errorHandler.authenticationEntryPoint())
+                .accessDeniedHandler(errorHandler.accessDeniedHandler());
     }
 
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)

@@ -24,7 +24,7 @@ import org.springframework.web.cors.DefaultCorsProcessor;
 import capstone.zephyr.zephyr.api.APIRequests;
 
 @Component
-public class JsonSecurityErrorHandler implements AuthenticationEntryPoint, AccessDeniedHandler {
+public class JsonSecurityErrorHandler {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
@@ -42,15 +42,27 @@ public class JsonSecurityErrorHandler implements AuthenticationEntryPoint, Acces
         mapper.writeValue(response.getWriter(), new APIRequests(false, status.getReasonPhrase()));
     }
 
-    @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response,
-            AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        fillResponse(request, response, HttpStatus.FORBIDDEN);
+    private class JsonAuthenticationEntryPoint implements AuthenticationEntryPoint {
+        @Override
+        public void commence(HttpServletRequest request, HttpServletResponse response,
+                AuthenticationException authException) throws IOException, ServletException {
+            fillResponse(request, response, HttpStatus.UNAUTHORIZED);
+        }
     }
 
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException authException) throws IOException, ServletException {
-        fillResponse(request, response, HttpStatus.UNAUTHORIZED);
+    private class JsonAccessDeniedHandler implements AccessDeniedHandler {
+        @Override
+        public void handle(HttpServletRequest request, HttpServletResponse response,
+                AccessDeniedException accessDeniedException) throws IOException, ServletException {
+            fillResponse(request, response, HttpStatus.FORBIDDEN);
+        }
+    }
+
+    AuthenticationEntryPoint authenticationEntryPoint() {
+        return new JsonAuthenticationEntryPoint();
+    }
+
+    AccessDeniedHandler accessDeniedHandler() {
+        return new JsonAccessDeniedHandler();
     }
 }
