@@ -44,4 +44,16 @@ public class DatabaseAccess {
         String sqlString = "SELECT company_name FROM shareholder_info WHERE shareholder_name = ?;";
         return queryForObjectOrNull(sqlString, String.class, content);
     }
+
+    public String queryVoteParameter(int content) {
+        String sqlString = "SELECT parameter_name_1, parameter_name_2, parameter_name_3, parameter_name_4, parameter_name_5, parameter_name_6, parameter_name_7, parameter_name_8, parameter_name_9, parameter_name_10 FROM vote_count WHERE poll_id = ?;";
+        System.out.println(sqlString);
+        return queryForObjectOrNull(sqlString, String.class, content);
+    }
+
+    public String queryVoteCount(int content) {
+        String sqlString = "SELECT vote_count_1, vote_count_2, vote_count_3, vote_count_4, vote_count_5, vote_count_6, vote_count_7, vote_count_8, vote_count_9, vote_count_10 FROM vote_count WHERE poll_id = ?;";
+        System.out.println(sqlString);
+        return queryForObjectOrNull(sqlString, String.class, content);
+    }
 }
