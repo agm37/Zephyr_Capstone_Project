@@ -1,6 +1,5 @@
 package capstone.zephyr.zephyr.api;
 
-import java.util.concurrent.atomic.AtomicLong;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +12,55 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import java.util.ArrayList;
 
 import capstone.zephyr.zephyr.doa.DatabaseAccess;
 import capstone.zephyr.zephyr.doa.LoginRequest;
 
 @Controller
 public class APIController {
+    
+    @Autowired
+    private DatabaseAccess accessDatabase;
 
-  @Autowired
-  private DatabaseAccess accessDatabase;
-  private final AtomicLong counter = new AtomicLong();
+    @PostMapping("/authentication")
+    @ResponseBody
+    public APIRequests authenticate(@RequestBody LoginRequest request) {
+        boolean response = false;
+        String message = "Not authenticated";
+
+        int authenticatePassword = accessDatabase.queryPasswordAuthenticate(request.GetPassword());
+
+        if (authenticatePassword == 1) {
+            response = true;
+            message = "Successfully authenticated";
+        }
+        return new APIRequests(response, message);
+    }
+
+    @PostMapping("/pollInfo")
+    @ResponseBody
+    public APIRequests getPollInfo(@RequestBody VotingRequest request) {
+        ArrayList<String> parameterResponse;
+        ArrayList<Integer> voteCountResponse;
+
+        return new APIRequests(parameterResponse, voteCountResponse);
+    }
+
+    @RequestMapping("/hello")
+    public String hello(@CookieValue(value = "hitCounter", defaultValue = "0") Long hitCounter, HttpServletResponse response) {
+        hitCounter++;
+
+        Cookie cookie = new Cookie("hitCounter", hitCounter.toString());
+        response.addCookie(cookie);
+
+        return "I AM RESPONDING";
+    }
+
+
+
+  //Test Code/Templates
+  /*
 
   @GetMapping("/zephyr")
   @ResponseBody
@@ -38,38 +76,5 @@ public class APIController {
     return new APIRequests(counter.incrementAndGet(), String.format(user_name));
   }
 
-  @PostMapping("/authentication")
-  @ResponseBody
-  public APIRequests authenticate(@RequestBody LoginRequest request) {
-
-    boolean response = false;
-    String message = "Not authenticated";
-
-    int authenticatePassword = accessDatabase.queryPasswordAuthenticate(request.GetPassword());
-
-    if (authenticatePassword == 1) {
-      response = true;
-      message = "Successfully authenticated";
-    }
-    return new APIRequests(response, message);
-  }
-
-  /*@PostMapping("/voting")
-  @ResponseBody
-  public APIRequests returnShares(@RequestBody) {
-
-    
-    return new APIRequests(shares);
-  }*/
-
-  @RequestMapping("/hello")
-  public String hello(@CookieValue(value = "hitCounter", defaultValue = "0") Long hitCounter, HttpServletResponse response) {
-
-    hitCounter++;
-
-    Cookie cookie = new Cookie("hitCounter", hitCounter.toString());
-    response.addCookie(cookie);
-
-    return "I AM RESPONDING";
-  }
+  */
 }
