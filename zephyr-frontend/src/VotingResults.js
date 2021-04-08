@@ -43,6 +43,7 @@ class VotingResults extends Component {
     renderPollResuts = () => {
         return (
             <div>
+                <p>Hi this is the voting results page</p>
                 <table>
                     {this.PollTable}
                 </table>
@@ -58,12 +59,8 @@ class VotingResults extends Component {
                 {this.state.Polls.map(element => (
                     <React.Fragment key={element.column.poll_id}>
                         <dd>ID: {element.column.poll_id}</dd>
-                            {this.state.Polls.column.map(votes => (
-                                <React.Fragment key={votes.poll_id}>
-                                    <dd>Catagory: {this.votes.parameter_name}</dd>
-                                    <dd>Votes cast: {this.votes.vote_cout}</dd>
-                                </React.Fragment>
-                            ))}
+                        <dd>Votes sent: {element.column.num_votes}</dd>
+                        <dd>Votes remaining: {element.column.num_votes_remaining}</dd>
 
                     </React.Fragment>
 
@@ -79,6 +76,7 @@ class VotingResults extends Component {
     renderDefaultView = () => {
         return(
             <div>
+                <p>Hi this is the voting results page</p>
                 <p>No search results found</p>
             </div>
 
