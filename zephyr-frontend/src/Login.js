@@ -48,6 +48,8 @@ class Login extends Component {
             console.error(ex);
         }
 
+
+
         this.props.onLoginResult(result);
     }
 
