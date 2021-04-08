@@ -10,11 +10,11 @@ public class LoginRequest {
         this.password = password;
     }
 
-    public String GetUserName() {
+    public String getUserName() {
         return this.username;
     }
 
-    public String GetPassword() {
+    public String getPassword() {
         return this.password;
     }
 }
