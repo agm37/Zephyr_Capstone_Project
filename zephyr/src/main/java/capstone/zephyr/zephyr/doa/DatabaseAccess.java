@@ -1,5 +1,8 @@
 package capstone.zephyr.zephyr.doa;
 
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -45,15 +48,29 @@ public class DatabaseAccess {
         return queryForObjectOrNull(sqlString, String.class, content);
     }
 
-    public String queryVoteParameter(int content) {
+    public ArrayList<String> queryVoteParameter(int content) {
         String sqlString = "SELECT parameter_name_1, parameter_name_2, parameter_name_3, parameter_name_4, parameter_name_5, parameter_name_6, parameter_name_7, parameter_name_8, parameter_name_9, parameter_name_10 FROM vote_count WHERE poll_id = ?;";
         System.out.println(sqlString);
-        return queryForObjectOrNull(sqlString, String.class, content);
+        
+        return databaseTemplate.queryForObject(sqlString, (ResultSet rs, int rowNum) -> {
+            ArrayList<String> results = new ArrayList<String>();
+            for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+                results.add(rs.getString(i));
+            }
+            return results;
+        }, content);
     }
 
-    public String queryVoteCount(int content) {
+    public ArrayList<Integer> queryVoteCount(int content) {
         String sqlString = "SELECT vote_count_1, vote_count_2, vote_count_3, vote_count_4, vote_count_5, vote_count_6, vote_count_7, vote_count_8, vote_count_9, vote_count_10 FROM vote_count WHERE poll_id = ?;";
         System.out.println(sqlString);
-        return queryForObjectOrNull(sqlString, String.class, content);
+        
+        return databaseTemplate.queryForObject(sqlString, (ResultSet rs, int rowNum) -> {
+            ArrayList<Integer> results = new ArrayList<Integer>();
+            for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+                results.add(rs.getInt(i));
+            }
+            return results;
+        }, content);
     }
 }
