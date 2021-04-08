@@ -20,7 +20,7 @@ public class APIRequests {
         this.response = response;
         this.message = message;
     }
-
+  
     public APIRequests(ArrayList<String> parameterResponse, ArrayList<Integer> voteCountResponse) {
         this.parameterResponse = parameterResponse;
         this.voteCountResponse = voteCountResponse;

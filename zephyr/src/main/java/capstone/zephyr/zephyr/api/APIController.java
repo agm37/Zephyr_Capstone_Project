@@ -16,10 +16,11 @@ import java.util.ArrayList;
 
 import capstone.zephyr.zephyr.doa.DatabaseAccess;
 import capstone.zephyr.zephyr.doa.LoginRequest;
+import capstone.zephyr.zephyr.doa.VotingRequest;
 
 @Controller
 public class APIController {
-    
+
     @Autowired
     private DatabaseAccess accessDatabase;
 
@@ -29,7 +30,7 @@ public class APIController {
         boolean response = false;
         String message = "Not authenticated";
 
-        int authenticatePassword = accessDatabase.queryPasswordAuthenticate(request.GetPassword());
+        int authenticatePassword = accessDatabase.queryPasswordAuthenticate(request.getPassword());
 
         if (authenticatePassword == 1) {
             response = true;
@@ -41,8 +42,8 @@ public class APIController {
     @PostMapping("/pollInfo")
     @ResponseBody
     public APIRequests getPollInfo(@RequestBody VotingRequest request) {
-        ArrayList<String> parameterResponse;
-        ArrayList<Integer> voteCountResponse;
+        ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(request.getPollID());
+        ArrayList<Integer> voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
 
         return new APIRequests(parameterResponse, voteCountResponse);
     }
