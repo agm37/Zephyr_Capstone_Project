@@ -1,10 +1,8 @@
 package capstone.zephyr.zephyr.api;
 
 import java.util.concurrent.atomic.AtomicLong;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -23,7 +21,7 @@ import capstone.zephyr.zephyr.doa.LoginRequest;
 public class APIController {
 
   @Autowired
-  private DatabaseAccess credentialQuery;
+  private DatabaseAccess accessDatabase;
   private final AtomicLong counter = new AtomicLong();
 
   @GetMapping("/zephyr")
@@ -36,7 +34,7 @@ public class APIController {
   @GetMapping("/credentials/{name}")
   @ResponseBody
   public APIRequests returnCredentials(@PathVariable String name) {
-    String user_name = credentialQuery.queryUserName(name);
+    String user_name = accessDatabase.queryUserName(name);
     return new APIRequests(counter.incrementAndGet(), String.format(user_name));
   }
 
@@ -47,9 +45,11 @@ public class APIController {
     boolean response = false;
     String message = "Not authenticated";
 
-    if (request.GetPassword().equals(credentialQuery.queryPasswordForUserName(request.GetUserName()))) {
+    int authenticatePassword = accessDatabase.queryPasswordAuthenticate(request.GetPassword());
+
+    if (authenticatePassword == 1) {
       response = true;
-      message = "Correctly authenticated";
+      message = "Successfully authenticated";
     }
     return new APIRequests(response, message);
   }
@@ -62,7 +62,7 @@ public class APIController {
     return new APIRequests(shares);
   }*/
 
-  @RequestMapping(value = "/hello")
+  @RequestMapping("/hello")
   public String hello(@CookieValue(value = "hitCounter", defaultValue = "0") Long hitCounter, HttpServletResponse response) {
 
     hitCounter++;
