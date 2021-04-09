@@ -18,7 +18,10 @@ class VotingResults extends Component {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({
+                    poll_id: 1
+                })
 
             })
 
