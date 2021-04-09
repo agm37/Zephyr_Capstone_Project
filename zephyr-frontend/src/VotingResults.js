@@ -13,7 +13,7 @@ class VotingResults extends Component {
         
        
         try {
-            let response = await fetch(`${process.env.REACT_APP_SERVER}/`, {  //add a route for polls to be taken from
+            let response = await fetch(`${process.env.REACT_APP_SERVER}/pollInfo`, {  //add a route for polls to be taken from
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
