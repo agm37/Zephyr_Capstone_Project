@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import VotingPage from './VotingPage';
 import LoginPage from './LoginPage'
+import VotingResults from './VotingResults'
 
 function App() {
     return (
@@ -13,9 +14,15 @@ function App() {
 
                     <Route
                         exact
+                        path="/votingresults"
+                        component={VotingResults}
+                    />
+
+                    {/* <Route
+                        exact
                         path="/"
                         render={() => (<Redirect to="/login" />)}
-                    />
+                    /> */}
 
                     <Route
                         exact

@@ -7,20 +7,30 @@ class VotingResults extends Component {
 
         this.state = {
             Polls: [],
-            hasPolls: false
+            hasPolls: false,
+            pollID: 0
         }
+        this.GetVotes()
+    }
 
+
+
+        
+    async GetVotes() {
         
        
         try {
             let response = await fetch(`${process.env.REACT_APP_SERVER}/pollInfo`, {  //add a route for polls to be taken from
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*' ,
+                    "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
                 },
                 body: JSON.stringify({
-                    poll_id: 1
+                    poll_id: this.state.pollID
                 })
 
             })
