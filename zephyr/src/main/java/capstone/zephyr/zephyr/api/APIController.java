@@ -3,6 +3,11 @@ package capstone.zephyr.zephyr.api;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,19 +29,24 @@ public class APIController {
     @Autowired
     private DatabaseAccess accessDatabase;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @PostMapping("/authentication")
     @ResponseBody
     public APIRequests authenticate(@RequestBody LoginRequest request) {
-        boolean response = false;
-        String message = "Not authenticated";
-
-        int authenticatePassword = accessDatabase.queryPasswordAuthenticate(request.getPassword());
-
-        if (authenticatePassword == 1) {
-            response = true;
-            message = "Successfully authenticated";
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+            request.getUserName(), request.getPassword());
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(token);
+        } catch (AuthenticationException ex) {
+            SecurityContextHolder.clearContext();
+            return new APIRequests(false, "Not authenticated");
         }
-        return new APIRequests(response, message);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return new APIRequests(true, "Successfully authenticated");
     }
 
     @PostMapping("/pollInfo")
