@@ -37,7 +37,8 @@ class Login extends Component {
                 body: JSON.stringify({
                     username: this.state.username,
                     password: this.state.password
-                })
+                }),
+                credentials: 'include',
             })
 
             let content = await response.json()

@@ -24,13 +24,16 @@ public class ZephyrApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins(corsAllowedOrigins);
+				registry
+					.addMapping("/**")
+					.allowedOrigins(corsAllowedOrigins)
+					.allowCredentials(true);
 			}
 		};
 	}
 
 	@Bean
-    public MapSessionRepository sessionRepository() {
-        return new MapSessionRepository(new ConcurrentHashMap<>());
-    }
+  public MapSessionRepository sessionRepository() {
+    return new MapSessionRepository(new ConcurrentHashMap<>());
+  }
 }
