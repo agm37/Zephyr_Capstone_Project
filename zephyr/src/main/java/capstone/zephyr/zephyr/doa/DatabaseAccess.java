@@ -2,16 +2,16 @@ package capstone.zephyr.zephyr.doa;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+
+import capstone.zephyr.zephyr.model.LoginModel;
 
 @Service
 public class DatabaseAccess {
@@ -41,15 +41,24 @@ public class DatabaseAccess {
         return queryForObjectOrNull(sqlString, String.class, content);
     }
 
-    public UserDetails queryUserDetailsForUserName(String content) {
-        String sqlString = "SELECT hashed_password, is_admin FROM company_logins WHERE user_name = ?;";
-        return queryForObjectOrNull(sqlString, (ResultSet rs, int rowNum) -> {
-            ArrayList<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            if (rs.getBoolean(2)) {
-                authorities.add(new SimpleGrantedAuthority("admin"));
-            }
-            return new User(content, rs.getString(1), authorities);
-        }, content);
+    private RowMapper<LoginModel> getLoginModelRowMapper() {
+        return (ResultSet rs, int rowNum) ->
+            new LoginModel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getBoolean(4));
+    }
+
+    public LoginModel queryLoginByUserName(String content) {
+        String sqlString = "SELECT company_id, user_name, hashed_password, is_admin FROM company_logins WHERE user_name = ?;";
+        return queryForObjectOrNull(sqlString, getLoginModelRowMapper(), content);
+    }
+
+    public void updateLoginPasswordById(int id, String newPassword) {
+        String sqlString = "UPDATE company_logins SET hashed_password = ? WHERE company_id = ?";
+        databaseTemplate.update(sqlString, newPassword, id);
+    }
+
+    public List<LoginModel> queryAllLogins() {
+        String sqlString = "SELECT company_id, user_name, hashed_password, is_admin FROM company_logins";
+        return databaseTemplate.query(sqlString, getLoginModelRowMapper());
     }
 
     public String queryUserShares(String content) {
