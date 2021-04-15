@@ -24,16 +24,17 @@ class VotingResults extends Component {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*' ,
-                    "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
-                    "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+                    'Content-Type': 'application/json'                 
+
                 },
                 body: JSON.stringify({
                     poll_id: this.state.pollID
-                })
+                }),
+                credentials: 'include'
 
             })
+
+            console.log("fectch sent")
 
             this.state.Polls = await response.json()
             console.log(this.state.Polls);
@@ -46,6 +47,7 @@ class VotingResults extends Component {
 
         } catch (ex) {
             console.error(ex);
+            console.log("fetch failed")
         }
 
 
