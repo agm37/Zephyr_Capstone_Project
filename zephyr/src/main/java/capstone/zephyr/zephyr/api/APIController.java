@@ -52,6 +52,7 @@ public class APIController {
     @PostMapping("/pollInfo")
     @ResponseBody
     public APIRequests getPollInfo(@RequestBody VotingRequest request) {
+        //System.out.println("recieved request" + request);
         ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(request.getPollID());
         ArrayList<Integer> voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
 

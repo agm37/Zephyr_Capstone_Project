@@ -28,7 +28,7 @@ class VotingResults extends Component {
 
                 },
                 body: JSON.stringify({
-                    poll_id: this.state.pollID
+                    pollID: this.state.pollID
                 }),
                 credentials: 'include'
 
