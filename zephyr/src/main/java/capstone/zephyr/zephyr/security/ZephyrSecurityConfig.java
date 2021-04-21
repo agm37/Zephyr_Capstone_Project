@@ -37,6 +37,8 @@ public class ZephyrSecurityConfig extends WebSecurityConfigurerAdapter {
         }
 
         http
+            .cors()
+                .and()
             .authorizeRequests()
                 .antMatchers("/authentication").permitAll()
                 .anyRequest().authenticated()

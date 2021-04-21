@@ -66,14 +66,14 @@ class Login extends Component {
                 <h1>
                     Login
                 </h1>
-                <div class="form-input-wrapper">
-                    <label for="username">Username</label>
+                <div className="form-input-wrapper">
+                    <label htmlFor="username">Username</label>
                     <input
                         data-testid="username" name="username" type="text"
                         value={this.state.username} required onChange={this.handleChange} />
                 </div>
-                <div class="form-input-wrapper">
-                    <label for="password">Password</label>
+                <div className="form-input-wrapper">
+                    <label htmlFor="password">Password</label>
                     <input
                         data-testid="password" name="password" type="password"
                         value={this.state.password} required onChange={this.handleChange} />
