@@ -1,7 +1,6 @@
 package capstone.zephyr.zephyr.api;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,19 +8,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import java.util.ArrayList;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import capstone.zephyr.zephyr.doa.DatabaseAccess;
-import capstone.zephyr.zephyr.doa.LoginRequest;
-import capstone.zephyr.zephyr.doa.VotingRequest;
+import capstone.zephyr.zephyr.dao.DatabaseAccess;
+import capstone.zephyr.zephyr.model.LoginRequest;
+import capstone.zephyr.zephyr.model.CreatePollRequest;
+import capstone.zephyr.zephyr.model.PollInfoRequest;
+import capstone.zephyr.zephyr.model.SetParametersRequest;
+import capstone.zephyr.zephyr.model.ShareholderVotingRequest;
+import capstone.zephyr.zephyr.model.UpdateVoteCountRequest;
+
 
 @Controller
 public class APIController {
@@ -49,26 +48,67 @@ public class APIController {
         return new APIRequests(true, "Successfully authenticated");
     }
 
-    @PostMapping("/pollInfo")
+    @PostMapping("/checkAdmin")
     @ResponseBody
-    public APIRequests getPollInfo(@RequestBody VotingRequest request) {
-        //System.out.println("recieved request" + request);
+    public int checkAdminStatus(String user_name) {
+        return accessDatabase.queryAdminStatus(user_name);
+    }
+
+    @GetMapping("/pollInfo")
+    @ResponseBody
+    public APIRequests getPollInfo(@RequestBody PollInfoRequest request) {
         ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(request.getPollID());
         ArrayList<Integer> voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
 
         return new APIRequests(parameterResponse, voteCountResponse);
     }
 
-    @RequestMapping("/hello")
-    public String hello(@CookieValue(value = "hitCounter", defaultValue = "0") Long hitCounter, HttpServletResponse response) {
-        hitCounter++;
+    @PostMapping("/createPoll")
+    @ResponseBody
+    public APIRequests createPoll(@RequestBody CreatePollRequest request) {
+        Boolean pollCreation = accessDatabase.createPoll(request.getPollName(), request.getCompanyName(), request.getNumberShareholders());
 
-        Cookie cookie = new Cookie("hitCounter", hitCounter.toString());
-        response.addCookie(cookie);
-
-        return "I AM RESPONDING";
+        if (pollCreation == true) {
+            return new APIRequests(true, "Successfully added new Poll");
+        }
+        else {
+            return new APIRequests(false, "Failed to create new Poll");
+        }
     }
 
+    @PostMapping("/setParameters")
+    @ResponseBody
+    public APIRequests setVoteParameters(@RequestBody SetParametersRequest request) {
+        Boolean setParameters = accessDatabase.setVoteParameters(request.getPollID(), request.getParameterNames());
+
+        if (setParameters == true) {
+            return new APIRequests(true, "Successfully added new Poll");
+        }
+        else {
+            return new APIRequests(false, "Failed to create new Poll");
+        }
+    }
+
+    @PostMapping("/updateVoteCount")
+    @ResponseBody
+    public APIRequests updateVoteCount(@RequestBody UpdateVoteCountRequest request) {
+        accessDatabase.updateVotes(request.getPollID(), request.getVoteParameterNum(), request.getVoteCount());
+
+        return new APIRequests(true,"Successfully updated Vote Count");
+    }
+
+    @PostMapping("/shareholderVote")
+    @ResponseBody
+    public APIRequests shareholderVoting(@RequestBody ShareholderVotingRequest request) {
+        if (request.checkEligibility() == true) {
+            request.addVotes();
+            return new APIRequests(true, "Successfully added Votes to Poll");
+        }
+        else {
+            return new APIRequests(false, "Failed to add Votes");
+        }
+        
+    }
 
 
   //Test Code/Templates
@@ -87,6 +127,16 @@ public class APIController {
     String user_name = accessDatabase.queryUserName(name);
     return new APIRequests(counter.incrementAndGet(), String.format(user_name));
   }
+
+  @RequestMapping("/hello")
+    public String hello(@CookieValue(value = "hitCounter", defaultValue = "0") Long hitCounter, HttpServletResponse response) {
+        hitCounter++;
+
+        Cookie cookie = new Cookie("hitCounter", hitCounter.toString());
+        response.addCookie(cookie);
+
+        return "I AM RESPONDING";
+    }
 
   */
 }

@@ -1,10 +1,10 @@
-package capstone.zephyr.zephyr.doa;
+package capstone.zephyr.zephyr.model;
 
-public class VotingRequest {
+public class PollInfoRequest {
 
     private int pollID;
 
-    public VotingRequest(int pollID) {
+    public PollInfoRequest(int pollID) {
         this.pollID = pollID;
     }
 
