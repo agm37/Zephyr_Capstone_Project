@@ -3,12 +3,10 @@ package capstone.zephyr.zephyr.model;
 public class CreatePollRequest {
     private String pollName;
     private String companyName;
-    private int numberShareholders;
 
-    public CreatePollRequest(String pollName, String companyName, int numberShareholders) {
+    public CreatePollRequest(String pollName, String companyName) {
         this.pollName = pollName;
         this.companyName = companyName;
-        this.numberShareholders = numberShareholders;
     }
 
     public String getPollName() {
@@ -17,9 +15,5 @@ public class CreatePollRequest {
 
     public String getCompanyName() {
         return companyName;
-    }
-
-    public int getNumberShareholders() {
-        return numberShareholders;
     }
 }

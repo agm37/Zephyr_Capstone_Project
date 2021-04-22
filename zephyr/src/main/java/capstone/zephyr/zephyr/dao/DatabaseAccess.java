@@ -101,7 +101,7 @@ public class DatabaseAccess {
     //****Shareholder Insert/Update Queries (Setters)****\\
 
     public void updateShareholderEligibility(int shareholderID) {
-        String sqlString = "UPDATE shareholder_info SET has_voted = 1 WHERE sharedoler_id = ?;";
+        String sqlString = "UPDATE shareholder_info SET has_voted = 1 WHERE shareholder_id = ?;";
         databaseTemplate.update(sqlString, shareholderID);
     }
 
@@ -177,9 +177,9 @@ public class DatabaseAccess {
 
     //****Poll Creation Query (Initial Setter)****\\
 
-    public Boolean createPoll(String pollName, String companyName, int numberShareholders) {
+    public Boolean createPoll(String pollName, String companyName) {
         int newPollID = (queryForObjectOrNull("SELECT poll_id FROM vote_info WHERE poll_id = (SELECT max(poll_id) FROM vote_info)", Integer.class)) + 1;
-        String sqlString = "INSERT INTO vote_info (poll_id, poll_name, company_name, num_shareholders) VALUES ?,?,?,?;";
+        String sqlString = "INSERT INTO vote_info (poll_id, poll_name, company_name) VALUES ?,?,?;";
 
         return databaseTemplate.execute(sqlString, new PreparedStatementCallback<Boolean>() {
             @Override
@@ -187,8 +187,7 @@ public class DatabaseAccess {
                 sqlInsert.setInt(1, newPollID);
                 sqlInsert.setString(2, pollName);
                 sqlInsert.setString(3, companyName);
-                sqlInsert.setInt(4, numberShareholders);
-                
+                 
                 if (createPollCount(newPollID) == true) {
                     return sqlInsert.execute();
                 }

@@ -66,7 +66,7 @@ public class APIController {
     @PostMapping("/createPoll")
     @ResponseBody
     public APIRequests createPoll(@RequestBody CreatePollRequest request) {
-        Boolean pollCreation = accessDatabase.createPoll(request.getPollName(), request.getCompanyName(), request.getNumberShareholders());
+        Boolean pollCreation = accessDatabase.createPoll(request.getPollName(), request.getCompanyName());
 
         if (pollCreation == true) {
             return new APIRequests(true, "Successfully added new Poll");
@@ -89,53 +89,16 @@ public class APIController {
         }
     }
 
-    @PostMapping("/updateVoteCount")
-    @ResponseBody
-    public APIRequests updateVoteCount(@RequestBody UpdateVoteCountRequest request) {
-        accessDatabase.updateVotes(request.getPollID(), request.getVoteParameterNum(), request.getVoteCount());
-
-        return new APIRequests(true,"Successfully updated Vote Count");
-    }
-
     @PostMapping("/shareholderVote")
     @ResponseBody
     public APIRequests shareholderVoting(@RequestBody ShareholderVotingRequest request) {
         if (request.checkEligibility() == true) {
             request.addVotes();
+            request.setVoterStatus();
             return new APIRequests(true, "Successfully added Votes to Poll");
         }
         else {
             return new APIRequests(false, "Failed to add Votes");
         }        
     }
-
-
-  //Test Code/Templates
-  /*
-
-  @GetMapping("/zephyr")
-  @ResponseBody
-  public APIRequests sayHello(@RequestParam(name="name", required=false, defaultValue="Stranger") String name) {
-    String template = "Hello, %s!";
-    return new APIRequests(counter.incrementAndGet(), String.format(template, name));
-  }
-
-  @GetMapping("/credentials/{name}")
-  @ResponseBody
-  public APIRequests returnCredentials(@PathVariable String name) {
-    String user_name = accessDatabase.queryUserName(name);
-    return new APIRequests(counter.incrementAndGet(), String.format(user_name));
-  }
-
-  @RequestMapping("/hello")
-    public String hello(@CookieValue(value = "hitCounter", defaultValue = "0") Long hitCounter, HttpServletResponse response) {
-        hitCounter++;
-
-        Cookie cookie = new Cookie("hitCounter", hitCounter.toString());
-        response.addCookie(cookie);
-
-        return "I AM RESPONDING";
-    }
-
-  */
 }
