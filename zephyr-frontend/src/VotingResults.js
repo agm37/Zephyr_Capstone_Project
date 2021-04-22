@@ -59,6 +59,7 @@ class VotingResults extends Component {
         return (
             <div>
                 <p>Hi this is the voting results page</p>
+                <p>Voting Results: </p>
                 <table>
                     {this.PollTable}
                 </table>

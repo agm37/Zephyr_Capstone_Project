@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import VotingPage from './VotingPage';
 import LoginPage from './LoginPage'
 import VotingResults from './VotingResults'
+import NewPoll from './NewPoll'
 
 function App() {
     return (
@@ -11,6 +12,12 @@ function App() {
             <div className="App">
                 <header className="App-header">
                     <img src={logo} className="App-logo" alt="logo" />
+
+                    <Route
+                        exact
+                        path="/newpoll"
+                        component={NewPoll}
+                    />
 
                     <Route
                         exact
