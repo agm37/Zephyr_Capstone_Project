@@ -82,10 +82,10 @@ public class APIController {
         Boolean setParameters = accessDatabase.setVoteParameters(request.getPollID(), request.getParameterNames());
 
         if (setParameters == true) {
-            return new APIRequests(true, "Successfully added new Poll");
+            return new APIRequests(true, "Successfully set Parameter Names");
         }
         else {
-            return new APIRequests(false, "Failed to create new Poll");
+            return new APIRequests(false, "Failed to set Parameter Names");
         }
     }
 
@@ -106,8 +106,7 @@ public class APIController {
         }
         else {
             return new APIRequests(false, "Failed to add Votes");
-        }
-        
+        }        
     }
 
 
