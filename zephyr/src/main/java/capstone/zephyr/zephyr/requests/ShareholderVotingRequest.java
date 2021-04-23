@@ -1,4 +1,4 @@
-package capstone.zephyr.zephyr.model;
+package capstone.zephyr.zephyr.requests;
 
 import capstone.zephyr.zephyr.dao.DatabaseAccess;
 

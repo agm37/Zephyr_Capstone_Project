@@ -1,4 +1,4 @@
-package capstone.zephyr.zephyr.model;
+package capstone.zephyr.zephyr.requests;
 
 public class UpdateVoteCountRequest {
     private int pollID;

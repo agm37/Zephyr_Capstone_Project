@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import capstone.zephyr.zephyr.dao.DatabaseAccess;
-import capstone.zephyr.zephyr.model.LoginRequest;
-import capstone.zephyr.zephyr.model.CreatePollRequest;
-import capstone.zephyr.zephyr.model.PollInfoRequest;
-import capstone.zephyr.zephyr.model.SetParametersRequest;
-import capstone.zephyr.zephyr.model.ShareholderVotingRequest;
+import capstone.zephyr.zephyr.requests.CreatePollRequest;
+import capstone.zephyr.zephyr.requests.LoginRequest;
+import capstone.zephyr.zephyr.requests.PollInfoRequest;
+import capstone.zephyr.zephyr.requests.SetParametersRequest;
+import capstone.zephyr.zephyr.requests.ShareholderVotingRequest;
 
 
 @Controller

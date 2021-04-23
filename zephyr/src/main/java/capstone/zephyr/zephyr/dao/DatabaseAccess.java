@@ -41,11 +41,6 @@ public class DatabaseAccess {
 
     //****Login and Authentication Queries (Getters)****\\
 
-    public String queryUserName(String userName) {
-        String sqlString = "SELECT user_name FROM company_logins WHERE user_name = ?;";
-        return queryForObjectOrNull(sqlString, String.class, userName);
-    }
-
     private RowMapper<LoginModel> getLoginModelRowMapper() {
         return (ResultSet rs, int rowNum) ->
             new LoginModel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getBoolean(4));
