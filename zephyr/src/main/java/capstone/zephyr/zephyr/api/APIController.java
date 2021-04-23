@@ -39,6 +39,12 @@ public class APIController {
         return accessDatabase.queryAdminStatus(user_name);
     }
 
+    @PostMapping("/getNumShares")
+    @ResponseBody
+    public int getNumberOfShares(int shareholder_id) {
+        return accessDatabase.queryShareholderShares(shareholder_id);
+    }
+
     @GetMapping("/pollInfo")
     @ResponseBody
     public APIRequests getPollInfo(@RequestBody PollInfoRequest request) {
