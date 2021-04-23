@@ -1,6 +1,8 @@
 package capstone.zephyr.zephyr.api;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,6 +15,7 @@ import capstone.zephyr.zephyr.requests.CreatePollRequest;
 import capstone.zephyr.zephyr.requests.LoginRequest;
 import capstone.zephyr.zephyr.requests.PollInfoRequest;
 import capstone.zephyr.zephyr.requests.SetParametersRequest;
+import capstone.zephyr.zephyr.requests.ShareholderInfoRequest;
 import capstone.zephyr.zephyr.requests.ShareholderVotingRequest;
 
 
@@ -43,6 +46,12 @@ public class APIController {
     @ResponseBody
     public int getNumberOfShares(int shareholder_id) {
         return accessDatabase.queryShareholderShares(shareholder_id);
+    }
+
+    @PostMapping("/getShareholderInfo")
+    @ResponseBody
+    public List<Object> getShareholderInfo(@RequestBody ShareholderInfoRequest request) {
+        return request.getShareholderInfo();
     }
 
     @GetMapping("/pollInfo")
