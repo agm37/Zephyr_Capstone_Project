@@ -7,7 +7,7 @@ import capstone.zephyr.zephyr.dao.DatabaseAccess;
 
 public class ShareholderInfoRequest {
     private DatabaseAccess accessDatabase = new DatabaseAccess();
-    List<Object> info = new ArrayList <Object>();
+    private List<Object> info = new ArrayList <Object>();
     private int shareholderID;
 
     public ShareholderInfoRequest(int shareholder_id) {
