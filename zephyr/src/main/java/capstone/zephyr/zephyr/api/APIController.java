@@ -19,7 +19,6 @@ import capstone.zephyr.zephyr.model.CreatePollRequest;
 import capstone.zephyr.zephyr.model.PollInfoRequest;
 import capstone.zephyr.zephyr.model.SetParametersRequest;
 import capstone.zephyr.zephyr.model.ShareholderVotingRequest;
-import capstone.zephyr.zephyr.model.UpdateVoteCountRequest;
 
 
 @Controller
@@ -34,8 +33,7 @@ public class APIController {
     @PostMapping("/authentication")
     @ResponseBody
     public APIRequests authenticate(@RequestBody LoginRequest request) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-            request.getUserName(), request.getPassword());
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword());
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(token);

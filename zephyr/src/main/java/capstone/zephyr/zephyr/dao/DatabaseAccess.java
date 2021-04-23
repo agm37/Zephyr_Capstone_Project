@@ -178,7 +178,7 @@ public class DatabaseAccess {
     //****Poll Creation Query (Initial Setter)****\\
 
     public Boolean createPoll(String pollName, String companyName) {
-        int newPollID = (queryForObjectOrNull("SELECT poll_id FROM vote_info WHERE poll_id = (SELECT max(poll_id) FROM vote_info)", Integer.class)) + 1;
+        int newPollID = (queryForObjectOrNull("SELECT poll_id FROM vote_info WHERE poll_id = (SELECT max(poll_id) FROM vote_info);", Integer.class)) + 1;
         String sqlString = "INSERT INTO vote_info (poll_id, poll_name, company_name) VALUES ?,?,?;";
 
         return databaseTemplate.execute(sqlString, new PreparedStatementCallback<Boolean>() {
