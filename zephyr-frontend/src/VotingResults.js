@@ -39,7 +39,7 @@ class VotingResults extends Component {
             this.state.Polls = await response.json()
             console.log(this.state.Polls);
             
-            if(this.state.Polls.length != 0) {
+            if(this.state.Polls.length !== 0) {
                 this.setState({
                     hasPolls: true
                 })
