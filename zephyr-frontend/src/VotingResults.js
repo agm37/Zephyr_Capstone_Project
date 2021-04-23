@@ -10,6 +10,11 @@ class VotingResults extends Component {
             hasPolls: false,
             pollID: 0
         }
+
+        this.state.pollID = props.pollID ? props.pollID : 0
+
+        console.log(this.state.pollID)
+
         this.GetVotes()
     }
 
