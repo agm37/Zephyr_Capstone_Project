@@ -17,13 +17,15 @@ function App() {
                         exact
                         path="/newpoll"
                         component={NewPoll}
+                        
                     />
 
                     <Route
                         exact
-                        path="/votingresults"
-                        component={VotingResults}
-                    />
+                        path="/votingresults" >
+                            <VotingResults pollID={1010101}/>
+                        
+                    </Route>
 
                     {/* <Route
                         exact
