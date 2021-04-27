@@ -10,6 +10,11 @@ class VotingResults extends Component {
             hasPolls: false,
             pollID: 0
         }
+
+        this.state.pollID = props.pollID ? props.pollID : 0
+
+        console.log(this.state.pollID)
+
         this.GetVotes()
     }
 
@@ -39,7 +44,7 @@ class VotingResults extends Component {
             this.state.Polls = await response.json()
             console.log(this.state.Polls);
             
-            if(this.state.Polls.length != 0) {
+            if(this.state.Polls.length !== 0) {
                 this.setState({
                     hasPolls: true
                 })
@@ -59,6 +64,7 @@ class VotingResults extends Component {
         return (
             <div>
                 <p>Hi this is the voting results page</p>
+                <p>Voting Results: </p>
                 <table>
                     {this.PollTable}
                 </table>

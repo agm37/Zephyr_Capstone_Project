@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import capstone.zephyr.zephyr.doa.DatabaseAccess;
+import capstone.zephyr.zephyr.dao.DatabaseAccess;
 import capstone.zephyr.zephyr.model.LoginModel;
 import capstone.zephyr.zephyr.security.UserService;
 

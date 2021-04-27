@@ -1,7 +1,6 @@
 package capstone.zephyr.zephyr.security;
 
 import java.util.ArrayList;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -11,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 
-import capstone.zephyr.zephyr.doa.DatabaseAccess;
+import capstone.zephyr.zephyr.dao.DatabaseAccess;
 import capstone.zephyr.zephyr.model.LoginModel;
 
 @Controller
