@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import VotingPage from './VotingPage';
 import LoginPage from './LoginPage'
 import VotingResults from './VotingResults'
-import NewPoll from './NewPoll'
+import NewPollPage from './NewPollPage'
 
 function App() {
     return (
@@ -16,15 +16,15 @@ function App() {
                     <Route
                         exact
                         path="/newpoll"
-                        component={NewPoll}
-                        
+                        component={NewPollPage}
+
                     />
 
                     <Route
                         exact
                         path="/votingresults" >
                             <VotingResults pollID={1010101}/>
-                        
+
                     </Route>
 
                     {/* <Route
