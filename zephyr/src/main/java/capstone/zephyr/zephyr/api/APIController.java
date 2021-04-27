@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,15 +30,23 @@ public class APIController {
     @Autowired
     private DatabaseAccess accessDatabase;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @PostMapping("/authentication")
     @ResponseBody
     public APIRequests authenticate(@RequestBody LoginRequest request) {
-        if (request.checkAuthentication() == true) {
-            return new APIRequests(true, "Successfully authenticated");
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword());
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(token);
+        } catch (AuthenticationException ex) {
+            SecurityContextHolder.clearContext();
+            return new APIRequests(false, "Not authenticated");
         }
-        else {
-            return new APIRequests(false, "Not authenticated"); 
-        }        
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return new APIRequests(true, "Successfully authenticated");
     }
 
     @PostMapping("/checkAdmin")
