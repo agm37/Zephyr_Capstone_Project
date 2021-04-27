@@ -150,43 +150,29 @@ public class DatabaseAccess {
 
     //****Vote Insert/Update Queries (Setters)****\\
 
-    public Boolean setVoteParameters(int pollID, ArrayList<String> parameterValues) {
-        String sqlString = "INSERT INTO vote_count (parameter_name_1, parameter_name_2, parameter_name_3, parameter_name_4, parameter_name_5, parameter_name_6, parameter_name_7, parameter_name_8, parameter_name_9, parameter_name_10) VALUES ?,?,?,?,?,?,?,?,?,? WHERE poll_id = " + pollID + ";";
-
-        return databaseTemplate.execute(sqlString, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement sqlInsert) throws SQLException, DataAccessException {
-                for (int i = 0; i < parameterValues.size(); i++) {
-                    sqlInsert.setString((i + 1), parameterValues.get(i));
-                }
-                return sqlInsert.execute();
-            }
-        });
-    }
-
     public void updateVotes(int pollID, int voteParameterNum, int voteCount) {
         String sqlString = "UPDATE vote_count SET vote_count_" + voteParameterNum + " = ? WHERE poll_id = ?;";
         databaseTemplate.update(sqlString, voteCount, pollID);
     }
 
+    public int getNewPollID() {
+        int newPollID = (queryForObjectOrNull("SELECT poll_id FROM vote_info WHERE poll_id = (SELECT max(poll_id) FROM vote_info);", Integer.class)) + 1;
+        return newPollID;
+    }
+
 
     //****Poll Creation Query (Initial Setter)****\\
 
-    public Boolean createPoll(String pollName, String companyName) {
-        int newPollID = (queryForObjectOrNull("SELECT poll_id FROM vote_info WHERE poll_id = (SELECT max(poll_id) FROM vote_info);", Integer.class)) + 1;
+    public Boolean createPoll(String pollName, String companyName, int pollID) {
         String sqlString = "INSERT INTO vote_info (poll_id, poll_name, company_name) VALUES ?,?,?;";
 
         return databaseTemplate.execute(sqlString, new PreparedStatementCallback<Boolean>() {
             @Override
             public Boolean doInPreparedStatement(PreparedStatement sqlInsert) throws SQLException, DataAccessException {
-                sqlInsert.setInt(1, newPollID);
+                sqlInsert.setInt(1, pollID);
                 sqlInsert.setString(2, pollName);
                 sqlInsert.setString(3, companyName);
-                 
-                if (createPollCount(newPollID) == true) {
-                    return sqlInsert.execute();
-                }
-                else {return false;}                
+                return sqlInsert.execute();            
             }
         });
     }
@@ -198,6 +184,20 @@ public class DatabaseAccess {
             @Override
             public Boolean doInPreparedStatement(PreparedStatement sqlInsert) throws SQLException, DataAccessException {
                 sqlInsert.setInt(1, pollID);
+                return sqlInsert.execute();
+            }
+        });
+    }
+
+    public Boolean setVoteParameters(int pollID, ArrayList<String> parameterValues) {
+        String sqlString = "INSERT INTO vote_count (parameter_name_1, parameter_name_2, parameter_name_3, parameter_name_4, parameter_name_5, parameter_name_6, parameter_name_7, parameter_name_8, parameter_name_9, parameter_name_10) VALUES ?,?,?,?,?,?,?,?,?,? WHERE poll_id = " + pollID + ";";
+
+        return databaseTemplate.execute(sqlString, new PreparedStatementCallback<Boolean>() {
+            @Override
+            public Boolean doInPreparedStatement(PreparedStatement sqlInsert) throws SQLException, DataAccessException {
+                for (int i = 0; i < parameterValues.size(); i++) {
+                    sqlInsert.setString((i + 1), parameterValues.get(i));
+                }
                 return sqlInsert.execute();
             }
         });
