@@ -78,11 +78,7 @@ public class APIController {
     @PostMapping("/createPoll")
     @ResponseBody
     public APIRequests createPoll(@RequestBody CreatePollRequest request) {
-        Boolean pollCreation = accessDatabase.createPoll(request.getPollName(), request.getCompanyName(), request.getPollID());
-        Boolean createPollCount = accessDatabase.createPollCount(request.getPollID());
-        Boolean setParameters = accessDatabase.setVoteParameters(request.getPollID(), request.getParameterNames());        
-
-        if (pollCreation == true && createPollCount == true && setParameters == true) {
+        if (accessDatabase.createPoll(request.getPollName(), request.getCompanyName(), request.getParameterNames())) {
             return new APIRequests(true, "Successfully added new Poll");
         }
         else {
@@ -100,6 +96,6 @@ public class APIController {
         }
         else {
             return new APIRequests(false, "Failed to add Votes");
-        }        
+        }
     }
 }
