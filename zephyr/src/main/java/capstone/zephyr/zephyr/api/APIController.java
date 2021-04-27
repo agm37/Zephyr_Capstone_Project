@@ -19,7 +19,6 @@ import capstone.zephyr.zephyr.dao.DatabaseAccess;
 import capstone.zephyr.zephyr.requests.CreatePollRequest;
 import capstone.zephyr.zephyr.requests.LoginRequest;
 import capstone.zephyr.zephyr.requests.PollInfoRequest;
-import capstone.zephyr.zephyr.requests.SetParametersRequest;
 import capstone.zephyr.zephyr.requests.ShareholderInfoRequest;
 import capstone.zephyr.zephyr.requests.ShareholderVotingRequest;
 
@@ -88,19 +87,6 @@ public class APIController {
         }
         else {
             return new APIRequests(false, "Failed to create new Poll");
-        }
-    }
-
-    @PostMapping("/setParameters")
-    @ResponseBody
-    public APIRequests setVoteParameters(@RequestBody SetParametersRequest request) {
-        Boolean setParameters = accessDatabase.setVoteParameters(request.getPollID(), request.getParameterNames());
-
-        if (setParameters == true) {
-            return new APIRequests(true, "Successfully set Parameter Names");
-        }
-        else {
-            return new APIRequests(false, "Failed to set Parameter Names");
         }
     }
 
