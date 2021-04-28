@@ -67,7 +67,7 @@ public class APIController {
         return request.getShareholderInfo();
     }
 
-    @GetMapping("/pollInfo")
+    @PostMapping("/pollInfo")
     @ResponseBody
     public APIRequests getPollInfo(@RequestBody PollInfoRequest request) {
         ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(request.getPollID());
