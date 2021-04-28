@@ -1,17 +1,22 @@
 package capstone.zephyr.zephyr.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import capstone.zephyr.zephyr.model.LoginModel;
 
@@ -61,7 +66,7 @@ public class DatabaseAccess {
         return queryForObjectOrNull(sqlString, Integer.class, userName);
     }
 
-    
+
     //****Login Insert/Update Queries (Setters)****\\
 
     public void updateLoginPasswordById(int companyID, String newPassword) {
@@ -91,7 +96,7 @@ public class DatabaseAccess {
         String sqlString = "SELECT has_voted FROM shareholder_info WHERE shareholder_id = ?;";
         return queryForObjectOrNull(sqlString, Integer.class, shareholderID);
     }
-    
+
 
     //****Shareholder Insert/Update Queries (Setters)****\\
 
@@ -100,7 +105,7 @@ public class DatabaseAccess {
         databaseTemplate.update(sqlString, shareholderID);
     }
 
-    
+
     //****Vote Information Queries (Getters)****\\
 
     public ArrayList<String> queryVoteParameter(int pollID) {
@@ -155,51 +160,54 @@ public class DatabaseAccess {
         databaseTemplate.update(sqlString, voteCount, pollID);
     }
 
-    public int getNewPollID() {
-        int newPollID = (queryForObjectOrNull("SELECT poll_id FROM vote_info WHERE poll_id = (SELECT max(poll_id) FROM vote_info);", Integer.class)) + 1;
-        return newPollID;
-    }
-
-
     //****Poll Creation Query (Initial Setter)****\\
 
-    public Boolean createPoll(String pollName, String companyName, int pollID) {
-        String sqlString = "INSERT INTO vote_info (poll_id, poll_name, company_name) VALUES ?,?,?;";
+    @Transactional
+    public Boolean createPoll(String pollName, String companyName, ArrayList<String> parameterValues) {
+        Optional<Integer> pollID = insertPollInfo(pollName, companyName);
+        if (pollID.isEmpty()) {
+            return false;
+        }
 
-        return databaseTemplate.execute(sqlString, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement sqlInsert) throws SQLException, DataAccessException {
-                sqlInsert.setInt(1, pollID);
-                sqlInsert.setString(2, pollName);
-                sqlInsert.setString(3, companyName);
-                return sqlInsert.execute();            
-            }
-        });
+        insertVoteParameters(pollID.get(), parameterValues);
+        return true;
     }
 
-    public Boolean createPollCount(int pollID) {
-        String sqlString = "INSERT INTO vote_count (poll_id) VALUES ?;";
+    private Optional<Integer> insertPollInfo(String pollName, String companyName) {
+        String sqlString = "INSERT INTO vote_info (poll_name, company_name) VALUES (?,?);";
 
-        return databaseTemplate.execute(sqlString, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement sqlInsert) throws SQLException, DataAccessException {
-                sqlInsert.setInt(1, pollID);
-                return sqlInsert.execute();
-            }
-        });
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        int rowsAffected = databaseTemplate.update(
+            (Connection connection) -> {
+                PreparedStatement sqlInsert = connection.prepareStatement(
+                    sqlString, Statement.RETURN_GENERATED_KEYS);
+                sqlInsert.setString(1, pollName);
+                sqlInsert.setString(2, companyName);
+                return sqlInsert;
+            },
+            keyHolder);
+        if (rowsAffected != 1) {
+            System.out.println("UPDATE FAILED, RETURNED ROWS AFFECTED " + rowsAffected);
+            return Optional.empty();
+        }
+
+        return Optional.of(keyHolder.getKey().intValue());
     }
 
-    public Boolean setVoteParameters(int pollID, ArrayList<String> parameterValues) {
-        String sqlString = "INSERT INTO vote_count (parameter_name_1, parameter_name_2, parameter_name_3, parameter_name_4, parameter_name_5, parameter_name_6, parameter_name_7, parameter_name_8, parameter_name_9, parameter_name_10) VALUES ?,?,?,?,?,?,?,?,?,? WHERE poll_id = " + pollID + ";";
+    private void insertVoteParameters(int pollID, ArrayList<String> parameterValues) {
+        String sqlString = "INSERT INTO vote_count (poll_id, parameter_name_1, parameter_name_2, parameter_name_3, parameter_name_4, parameter_name_5, parameter_name_6, parameter_name_7, parameter_name_8, parameter_name_9, parameter_name_10) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
-        return databaseTemplate.execute(sqlString, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement sqlInsert) throws SQLException, DataAccessException {
-                for (int i = 0; i < parameterValues.size(); i++) {
-                    sqlInsert.setString((i + 1), parameterValues.get(i));
-                }
-                return sqlInsert.execute();
+        databaseTemplate.execute(sqlString, (PreparedStatement sqlInsert) -> {
+            int nextIndex = 1;
+            sqlInsert.setInt(nextIndex++, pollID);
+            for (int i = 0; i < parameterValues.size(); i++) {
+                sqlInsert.setString(nextIndex++, parameterValues.get(i));
             }
+            for (int i = parameterValues.size(); i < 10; i++) {
+                sqlInsert.setString(nextIndex++, "");
+            }
+            return sqlInsert.execute();
         });
     }
 }
