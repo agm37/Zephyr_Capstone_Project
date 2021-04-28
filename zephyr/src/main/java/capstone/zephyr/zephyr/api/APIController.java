@@ -93,7 +93,8 @@ public class APIController {
     public APIRequests shareholderVoting(@RequestBody ShareholderVotingRequest request,
                                          @AuthenticationPrincipal LoginModel login) {
         if (login.getShareholderID().isPresent()
-            && !accessDatabase.queryHasShareholderVoted(login.getShareholderID().get())) {
+            && !accessDatabase.queryHasShareholderVotedInPoll(
+                    login.getShareholderID().get(), request.getPollID())) {
             accessDatabase.recordShareholderVote(login.getShareholderID().get(), request.getPollID(), request.getParameterNum());
             return new APIRequests(true, "Successfully added Votes to Poll");
         } else {

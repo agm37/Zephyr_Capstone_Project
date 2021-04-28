@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,18 +99,17 @@ public class DatabaseAccess {
         return queryForObjectOrNull(sqlString, Integer.class, shareHolderID);
     }
 
-    public boolean queryHasShareholderVoted(int shareholderID) {
-        String sqlString = "SELECT has_voted FROM shareholder_info WHERE shareholder_id = ?;";
-        Boolean result = queryForObjectOrNull(sqlString, Boolean.class, shareholderID);
-        return result != null && result;
+    //****Shareholder Poll Status Select/Insert Queries****\\
+
+    public boolean queryHasShareholderVotedInPoll(int shareholderID, int pollID) {
+        String sqlString = "SELECT * FROM shareholder_votes WHERE shareholder_id = ? AND poll_id = ?;";
+        SqlRowSet rowSet = databaseTemplate.queryForRowSet(sqlString, shareholderID, pollID);
+        return rowSet.next();
     }
 
-
-    //****Shareholder Insert/Update Queries (Setters)****\\
-
-    private void updateShareholderEligibility(int shareholderID) {
-        String sqlString = "UPDATE shareholder_info SET has_voted = 1 WHERE shareholder_id = ?;";
-        databaseTemplate.update(sqlString, shareholderID);
+    private void setShareholderVoteStatus(int shareholderID, int pollID) {
+        String sqlString = "INSERT INTO shareholder_votes (shareholder_id, poll_id) VALUES (?, ?)";
+        databaseTemplate.update(sqlString, shareholderID, pollID);
     }
 
 
@@ -171,7 +171,7 @@ public class DatabaseAccess {
     public void recordShareholderVote(int shareholderID, int pollID, int voteParameterNum) {
         int voteCount = queryShareholderShares(shareholderID);
         updateVotes(pollID, voteParameterNum, voteCount);
-        updateShareholderEligibility(shareholderID);
+        setShareholderVoteStatus(shareholderID, pollID);
     }
 
     //****Poll Creation Query (Initial Setter)****\\
