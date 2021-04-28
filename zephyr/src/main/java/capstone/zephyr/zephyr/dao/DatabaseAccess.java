@@ -98,15 +98,16 @@ public class DatabaseAccess {
         return queryForObjectOrNull(sqlString, Integer.class, shareHolderID);
     }
 
-    public int queryShareholderEligibility(int shareholderID) {
+    public boolean queryHasShareholderVoted(int shareholderID) {
         String sqlString = "SELECT has_voted FROM shareholder_info WHERE shareholder_id = ?;";
-        return queryForObjectOrNull(sqlString, Integer.class, shareholderID);
+        Boolean result = queryForObjectOrNull(sqlString, Boolean.class, shareholderID);
+        return result != null && result;
     }
 
 
     //****Shareholder Insert/Update Queries (Setters)****\\
 
-    public void updateShareholderEligibility(int shareholderID) {
+    private void updateShareholderEligibility(int shareholderID) {
         String sqlString = "UPDATE shareholder_info SET has_voted = 1 WHERE shareholder_id = ?;";
         databaseTemplate.update(sqlString, shareholderID);
     }
@@ -161,9 +162,16 @@ public class DatabaseAccess {
 
     //****Vote Insert/Update Queries (Setters)****\\
 
-    public void updateVotes(int pollID, int voteParameterNum, int voteCount) {
-        String sqlString = "UPDATE vote_count SET vote_count_" + voteParameterNum + " = ? WHERE poll_id = ?;";
+    private void updateVotes(int pollID, int voteParameterNum, int voteCount) {
+        String sqlString = "UPDATE vote_count SET vote_count_" + voteParameterNum + " = COALESCE(vote_count_" + voteParameterNum + ", 0) + ? WHERE poll_id = ?;";
         databaseTemplate.update(sqlString, voteCount, pollID);
+    }
+
+    @Transactional
+    public void recordShareholderVote(int shareholderID, int pollID, int voteParameterNum) {
+        int voteCount = queryShareholderShares(shareholderID);
+        updateVotes(pollID, voteParameterNum, voteCount);
+        updateShareholderEligibility(shareholderID);
     }
 
     //****Poll Creation Query (Initial Setter)****\\

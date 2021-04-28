@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import capstone.zephyr.zephyr.dao.DatabaseAccess;
+import capstone.zephyr.zephyr.model.LoginModel;
 import capstone.zephyr.zephyr.requests.CreatePollRequest;
 import capstone.zephyr.zephyr.requests.LoginRequest;
 import capstone.zephyr.zephyr.requests.PollInfoRequest;
@@ -88,13 +90,13 @@ public class APIController {
 
     @PostMapping("/shareholderVote")
     @ResponseBody
-    public APIRequests shareholderVoting(@RequestBody ShareholderVotingRequest request) {
-        if (request.checkEligibility() == true) {
-            request.addVotes();
-            request.setVoterStatus();
+    public APIRequests shareholderVoting(@RequestBody ShareholderVotingRequest request,
+                                         @AuthenticationPrincipal LoginModel login) {
+        if (login.getShareholderID().isPresent()
+            && !accessDatabase.queryHasShareholderVoted(login.getShareholderID().get())) {
+            accessDatabase.recordShareholderVote(login.getShareholderID().get(), request.getPollID(), request.getParameterNum());
             return new APIRequests(true, "Successfully added Votes to Poll");
-        }
-        else {
+        } else {
             return new APIRequests(false, "Failed to add Votes");
         }
     }
