@@ -2,6 +2,7 @@ package capstone.zephyr.zephyr.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,13 +15,16 @@ public class LoginModel implements UserDetails {
     private String username;
     private String password;
     private boolean isAdmin;
+    private Optional<Integer> shareholderID;
     private Collection<SimpleGrantedAuthority> authorities;
 
-    public LoginModel(int id, String username, String password, boolean isAdmin) {
+    public LoginModel(int id, String username, String password, boolean isAdmin,
+                      Optional<Integer> shareholderID) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.isAdmin = isAdmin;
+        this.shareholderID = shareholderID;
 
         this.authorities = new ArrayList<>();
         if (isAdmin) {
@@ -43,6 +47,10 @@ public class LoginModel implements UserDetails {
 
     public boolean isAdmin() {
         return isAdmin;
+    }
+
+    public Optional<Integer> getShareholderID() {
+        return shareholderID;
     }
 
     @Override

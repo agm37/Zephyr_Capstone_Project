@@ -3,6 +3,7 @@ package capstone.zephyr.zephyr.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,19 +47,24 @@ public class DatabaseAccess {
 
     //****Login and Authentication Queries (Getters)****\\
 
-    private RowMapper<LoginModel> getLoginModelRowMapper() {
-        return (ResultSet rs, int rowNum) ->
-            new LoginModel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getBoolean(4));
+    private static LoginModel loginModelRowMapper(ResultSet rs, int rowNum) throws SQLException {
+        Optional<Integer> shareholderID = Optional.of(rs.getInt(5));
+        if (rs.wasNull()) {
+            shareholderID = Optional.empty();
+        }
+
+        return new LoginModel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getBoolean(4),
+                                shareholderID);
     }
 
     public LoginModel queryLoginByUserName(String userName) {
-        String sqlString = "SELECT company_id, user_name, hashed_password, is_admin FROM company_logins WHERE user_name = ?;";
-        return queryForObjectOrNull(sqlString, getLoginModelRowMapper(), userName);
+        String sqlString = "SELECT company_id, user_name, hashed_password, is_admin, shareholder_id FROM company_logins WHERE user_name = ?;";
+        return queryForObjectOrNull(sqlString, DatabaseAccess::loginModelRowMapper, userName);
     }
 
     public List<LoginModel> queryAllLogins() {
-        String sqlString = "SELECT company_id, user_name, hashed_password, is_admin FROM company_logins;";
-        return databaseTemplate.query(sqlString, getLoginModelRowMapper());
+        String sqlString = "SELECT company_id, user_name, hashed_password, is_admin, shareholder_id FROM company_logins;";
+        return databaseTemplate.query(sqlString, DatabaseAccess::loginModelRowMapper);
     }
 
     public int queryAdminStatus(String userName) {
