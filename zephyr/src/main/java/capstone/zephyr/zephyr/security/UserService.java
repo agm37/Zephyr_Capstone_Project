@@ -1,9 +1,6 @@
 package capstone.zephyr.zephyr.security;
 
-import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,16 +27,11 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException("Unknown user: " + user);
         }
 
-        ArrayList<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        if (login.isAdmin()) {
-            authorities.add(new SimpleGrantedAuthority(ADMIN_ROLE));
-        }
-
-        return new User(login.getName(), login.getPassword(), authorities);
+        return login;
     }
 
     public void resetUserPassword(LoginModel user) {
-        String newPassword = user.getID() + user.getName();
+        String newPassword = user.getID() + user.getUsername();
         databaseAccess.updateLoginPasswordById(user.getID(), passwordEncoder.encode(newPassword));
     }
 }
