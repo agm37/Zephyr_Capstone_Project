@@ -3,6 +3,7 @@ package capstone.zephyr.zephyr.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,19 +48,24 @@ public class DatabaseAccess {
 
     //****Login and Authentication Queries (Getters)****\\
 
-    private RowMapper<LoginModel> getLoginModelRowMapper() {
-        return (ResultSet rs, int rowNum) ->
-            new LoginModel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getBoolean(4));
+    private static LoginModel loginModelRowMapper(ResultSet rs, int rowNum) throws SQLException {
+        Optional<Integer> shareholderID = Optional.of(rs.getInt(5));
+        if (rs.wasNull()) {
+            shareholderID = Optional.empty();
+        }
+
+        return new LoginModel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getBoolean(4),
+                                shareholderID);
     }
 
     public LoginModel queryLoginByUserName(String userName) {
-        String sqlString = "SELECT company_id, user_name, hashed_password, is_admin FROM company_logins WHERE user_name = ?;";
-        return queryForObjectOrNull(sqlString, getLoginModelRowMapper(), userName);
+        String sqlString = "SELECT company_id, user_name, hashed_password, is_admin, shareholder_id FROM company_logins WHERE user_name = ?;";
+        return queryForObjectOrNull(sqlString, DatabaseAccess::loginModelRowMapper, userName);
     }
 
     public List<LoginModel> queryAllLogins() {
-        String sqlString = "SELECT company_id, user_name, hashed_password, is_admin FROM company_logins;";
-        return databaseTemplate.query(sqlString, getLoginModelRowMapper());
+        String sqlString = "SELECT company_id, user_name, hashed_password, is_admin, shareholder_id FROM company_logins;";
+        return databaseTemplate.query(sqlString, DatabaseAccess::loginModelRowMapper);
     }
 
     public int queryAdminStatus(String userName) {
@@ -92,17 +99,17 @@ public class DatabaseAccess {
         return queryForObjectOrNull(sqlString, Integer.class, shareHolderID);
     }
 
-    public int queryShareholderEligibility(int shareholderID) {
-        String sqlString = "SELECT has_voted FROM shareholder_info WHERE shareholder_id = ?;";
-        return queryForObjectOrNull(sqlString, Integer.class, shareholderID);
+    //****Shareholder Poll Status Select/Insert Queries****\\
+
+    public boolean queryHasShareholderVotedInPoll(int shareholderID, int pollID) {
+        String sqlString = "SELECT * FROM shareholder_votes WHERE shareholder_id = ? AND poll_id = ?;";
+        SqlRowSet rowSet = databaseTemplate.queryForRowSet(sqlString, shareholderID, pollID);
+        return rowSet.next();
     }
 
-
-    //****Shareholder Insert/Update Queries (Setters)****\\
-
-    public void updateShareholderEligibility(int shareholderID) {
-        String sqlString = "UPDATE shareholder_info SET has_voted = 1 WHERE shareholder_id = ?;";
-        databaseTemplate.update(sqlString, shareholderID);
+    private void setShareholderVoteStatus(int shareholderID, int pollID) {
+        String sqlString = "INSERT INTO shareholder_votes (shareholder_id, poll_id) VALUES (?, ?)";
+        databaseTemplate.update(sqlString, shareholderID, pollID);
     }
 
 
@@ -155,9 +162,16 @@ public class DatabaseAccess {
 
     //****Vote Insert/Update Queries (Setters)****\\
 
-    public void updateVotes(int pollID, int voteParameterNum, int voteCount) {
-        String sqlString = "UPDATE vote_count SET vote_count_" + voteParameterNum + " = ? WHERE poll_id = ?;";
+    private void updateVotes(int pollID, int voteParameterNum, int voteCount) {
+        String sqlString = "UPDATE vote_count SET vote_count_" + voteParameterNum + " = COALESCE(vote_count_" + voteParameterNum + ", 0) + ? WHERE poll_id = ?;";
         databaseTemplate.update(sqlString, voteCount, pollID);
+    }
+
+    @Transactional
+    public void recordShareholderVote(int shareholderID, int pollID, int voteParameterNum) {
+        int voteCount = queryShareholderShares(shareholderID);
+        updateVotes(pollID, voteParameterNum, voteCount);
+        setShareholderVoteStatus(shareholderID, pollID);
     }
 
     //****Poll Creation Query (Initial Setter)****\\
