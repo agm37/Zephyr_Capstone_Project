@@ -141,11 +141,11 @@ public class DatabaseAccess {
         String sqlString = "SELECT is_closed FROM vote_info WHERE poll_id = ?";
 
         Integer result = queryForObjectOrNull(sqlString, Integer.class, pollID);
-        if (result == 0) {
-            return false;
+        if (result == 1) {
+            return true;
         }
         else {
-            return true;
+            return false;
         }
     }
 
