@@ -58,6 +58,10 @@ button.button-round:active {
     border-color: #006433;
 }
 
+button.button-round:disabled {
+    border-color: gray;
+}
+
 button.button-round.button-small {
     width: 32px;
     height: 32px;
@@ -137,10 +141,6 @@ a:visited {
 }
 
 .NewPoll-delete:disabled {
-    visibility: hidden;
-}
-
-.NewPoll-parameters button:disabled {
     visibility: hidden;
 }
 
