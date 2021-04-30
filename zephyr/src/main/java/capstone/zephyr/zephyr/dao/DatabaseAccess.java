@@ -76,6 +76,14 @@ public class DatabaseAccess {
 
     //****Login Insert/Update Queries (Setters)****\\
 
+    private void insertLoginForShareholder(int shareholderID, ShareholderModel shareholder) {
+        String sqlString = "INSERT INTO company_logins (company_name, user_name, hashed_password, is_admin, shareholder_id) VALUES (?, ?, ?, ?, ?)";
+        databaseTemplate.update(sqlString,
+            shareholder.getCompanyName(), shareholder.getShareholderName(),
+            shareholder.getDefaultPassword(), false,
+            shareholderID);
+    }
+
     public void updateLoginPasswordById(int companyID, String newPassword) {
         String sqlString = "UPDATE company_logins SET hashed_password = ? WHERE company_id = ?";
         databaseTemplate.update(sqlString, newPassword, companyID);
@@ -84,17 +92,24 @@ public class DatabaseAccess {
 
     //****Shareholder Information Queries (Setters)****\\
     @Transactional
-    public void addShareholder(ShareholderModel shareholder) {
-        String sqlString = "INSERT INTO shareholder_info (shareholder_id, shareholder_name, company_name, num_shares) VALUES (?,?,?,?);";
+    public void addShareholders(List<ShareholderModel> shareholders) {
+        String sqlString = "INSERT INTO shareholder_info (shareholder_name, company_name, num_shares) VALUES (?,?,?);";
 
-        databaseTemplate.execute(sqlString, (PreparedStatement sqlInsert) -> {
-            sqlInsert.setInt(1, shareholder.getShareholderID());
-            sqlInsert.setString(2, shareholder.getShareholderName());
-            sqlInsert.setString(3, shareholder.getCompanyName());
-            sqlInsert.setInt(4, shareholder.getNumberOfShares());
-        
-            return sqlInsert.execute();
-        });
+        for (ShareholderModel shareholder : shareholders) {
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+
+            databaseTemplate.update((Connection connection) -> {
+                PreparedStatement sqlInsert = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
+
+                sqlInsert.setString(1, shareholder.getShareholderName());
+                sqlInsert.setString(2, shareholder.getCompanyName());
+                sqlInsert.setInt(3, shareholder.getNumberOfShares());
+
+                return sqlInsert;
+            }, keyHolder);
+
+            insertLoginForShareholder(keyHolder.getKey().intValue(), shareholder);
+        }
     }
 
 
@@ -113,11 +128,6 @@ public class DatabaseAccess {
     public int queryShareholderShares(int shareHolderID) {
         String sqlString = "SELECT num_shares FROM shareholder_info WHERE shareholder_id = ?;";
         return queryForObjectOrNull(sqlString, Integer.class, shareHolderID);
-    }
-
-    public int getMaxShareholderID() {
-        String sqlString = "SELECT MAX(shareholder_id) FROM shareholder_info;";
-        return queryForObjectOrNull(sqlString, Integer.class);
     }
 
 

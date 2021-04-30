@@ -1,20 +1,17 @@
 package capstone.zephyr.zephyr.model;
 
 public class ShareholderModel {
-    private int shareholder_id;
     private String shareholder_name;
     private String company_name;
     private int num_shares;
+    private String default_password;
 
-    public ShareholderModel(int shareholder_id, String shareholder_name, String company_name, int num_shares) {
-        this.shareholder_id = shareholder_id;
+    public ShareholderModel(String shareholder_name, String company_name,
+                            int num_shares, String default_password) {
         this.shareholder_name = shareholder_name;
         this.company_name = company_name;
         this.num_shares = num_shares;
-    }
-
-    public int getShareholderID() {
-        return shareholder_id;
+        this.default_password = default_password;
     }
 
     public String getShareholderName() {
@@ -27,5 +24,9 @@ public class ShareholderModel {
 
     public int getNumberOfShares() {
         return num_shares;
+    }
+
+    public String getDefaultPassword() {
+        return default_password;
     }
 }

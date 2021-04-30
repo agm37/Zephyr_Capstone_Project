@@ -1,5 +1,6 @@
 package capstone.zephyr.zephyr.api;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,10 +11,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import capstone.zephyr.zephyr.dao.DatabaseAccess;
@@ -21,7 +25,6 @@ import capstone.zephyr.zephyr.model.LoginModel;
 import capstone.zephyr.zephyr.model.ShareholderModel;
 import capstone.zephyr.zephyr.requests.ClosePollRequest;
 import capstone.zephyr.zephyr.requests.CreatePollRequest;
-import capstone.zephyr.zephyr.requests.InputShareholdersRequest;
 import capstone.zephyr.zephyr.requests.LoginRequest;
 import capstone.zephyr.zephyr.requests.PollInfoRequest;
 import capstone.zephyr.zephyr.requests.ShareholderVotingRequest;
@@ -36,6 +39,9 @@ public class APIController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @PostMapping("/authentication")
     @ResponseBody
     public APIRequests authenticate(@RequestBody LoginRequest request) {
@@ -44,6 +50,7 @@ public class APIController {
         try {
             authentication = authenticationManager.authenticate(token);
         } catch (AuthenticationException ex) {
+            ex.printStackTrace();
             SecurityContextHolder.clearContext();
             return new APIRequests(false, "Not authenticated");
         }
@@ -147,16 +154,30 @@ public class APIController {
 
     @PostMapping("/addShareholders")
     @ResponseBody
-    public APIRequests addShareholders(@RequestBody InputShareholdersRequest request) {
-        request.setMinimumID(accessDatabase.getMaxShareholderID());
-        ArrayList<ShareholderModel> shareholderList = request.getShareholders();
-
-        for (int i = 0; i < shareholderList.size(); i++) {
-            accessDatabase.addShareholder(shareholderList.get(i));
+    public APIRequests addShareholders(@RequestParam("file") MultipartFile file) {
+        String csvData;
+        try {
+            csvData = new String(file.getBytes());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return new APIRequests(false, "Failed to add shareholders");
         }
 
-        //TODO create default login for each Shareholder
-        
+        ArrayList<ShareholderModel> shareholders = new ArrayList<>();
+
+        for (String line : csvData.split("\r\n")) {
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            String[] parsedLine = line.split(",");
+            shareholders.add(new ShareholderModel(
+                parsedLine[0], parsedLine[1],
+                Integer.parseInt(parsedLine[2]),
+                passwordEncoder.encode(parsedLine[3])));
+        }
+
+        accessDatabase.addShareholders(shareholders);
         return new APIRequests(true, "Successfully added Shareholders");
     }
 }
