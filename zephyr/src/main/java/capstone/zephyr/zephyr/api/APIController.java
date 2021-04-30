@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import capstone.zephyr.zephyr.dao.DatabaseAccess;
 import capstone.zephyr.zephyr.model.LoginModel;
@@ -54,7 +53,7 @@ public class APIController {
             SecurityContextHolder.clearContext();
             return new APIRequests(false, "Not authenticated");
         }
-        
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return new APIRequests(true, "Successfully authenticated");
     }
@@ -92,22 +91,12 @@ public class APIController {
     @ResponseBody
     public APIRequests getPollInfo(@RequestBody PollInfoRequest request) {
         ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(request.getPollID());
-<<<<<<< HEAD
-        ArrayList<Integer> voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
-        // if (accessDatabase.queryIsPollClosed(request.getPollID())) {
-        //     voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
-        // }
-=======
         ArrayList<Integer> voteCountResponse = new ArrayList<Integer>();
 
         if (accessDatabase.queryIsPollClosed(request.getPollID()) == true) {
             voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
         }
-<<<<<<< HEAD
->>>>>>> b34684c19ee19449c92f73b514e4a5ae3255adea
 
-=======
->>>>>>> 918e2726fd74ee162cf093a930aa33a7ac00334a
         return new APIRequests(parameterResponse, voteCountResponse);
     }
 
