@@ -115,6 +115,13 @@ public class DatabaseAccess {
 
     //****Vote Information Queries (Getters)****\\
 
+    public boolean queryIsPollClosed(int pollID) {
+        String sqlString = "SELECT is_closed FROM vote_info WHERE poll_id = ?";
+
+        Integer result = queryForObjectOrNull(sqlString, Integer.class, pollID);
+        return result != null && result == 1;
+    }
+
     public ArrayList<String> queryVoteParameter(int pollID) {
         String sqlString = "SELECT parameter_name_1, parameter_name_2, parameter_name_3, parameter_name_4, parameter_name_5, parameter_name_6, parameter_name_7, parameter_name_8, parameter_name_9, parameter_name_10 FROM vote_count WHERE poll_id = ?;";
 
@@ -185,6 +192,12 @@ public class DatabaseAccess {
 
         insertVoteParameters(pollID.get(), parameterValues);
         return true;
+    }
+
+    public boolean closePoll(int pollID) {
+        String sqlString = "UPDATE vote_info SET is_closed = 1 WHERE poll_id = ?";
+        int rowsAffected = databaseTemplate.update(sqlString, pollID);
+        return rowsAffected == 1;
     }
 
     private Optional<Integer> insertPollInfo(String pollName, String companyName) {

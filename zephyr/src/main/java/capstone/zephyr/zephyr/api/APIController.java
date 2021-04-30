@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import capstone.zephyr.zephyr.dao.DatabaseAccess;
 import capstone.zephyr.zephyr.model.LoginModel;
+import capstone.zephyr.zephyr.requests.ClosePollRequest;
 import capstone.zephyr.zephyr.requests.CreatePollRequest;
 import capstone.zephyr.zephyr.requests.LoginRequest;
 import capstone.zephyr.zephyr.requests.PollInfoRequest;
@@ -83,7 +84,10 @@ public class APIController {
     @ResponseBody
     public APIRequests getPollInfo(@RequestBody PollInfoRequest request) {
         ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(request.getPollID());
-        ArrayList<Integer> voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
+        ArrayList<Integer> voteCountResponse = null;
+        if (accessDatabase.queryIsPollClosed(request.getPollID())) {
+            voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
+        }
 
         return new APIRequests(parameterResponse, voteCountResponse);
     }
@@ -99,6 +103,17 @@ public class APIController {
         }
         else {
             return new APIRequests(false, "Failed to create new Poll");
+        }
+    }
+
+    @PostMapping("/closePoll")
+    @ResponseBody
+    public APIRequests closePoll(@RequestBody ClosePollRequest request,
+                                 @AuthenticationPrincipal LoginModel login) {
+        if (login.isAdmin() && accessDatabase.closePoll(request.getPollID())) {
+            return new APIRequests(true, "Successfully closed poll");
+        } else {
+            return new APIRequests(false, "Failed to close poll");
         }
     }
 
