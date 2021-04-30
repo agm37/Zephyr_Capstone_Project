@@ -90,8 +90,11 @@ public class APIController {
 
     @PostMapping("/createPoll")
     @ResponseBody
-    public APIRequests createPoll(@RequestBody CreatePollRequest request) {
-        if (accessDatabase.createPoll(request.getPollName(), request.getCompanyName(), request.getParameterNames())) {
+    public APIRequests createPoll(@RequestBody CreatePollRequest request,
+                                  @AuthenticationPrincipal LoginModel login) {
+        if (login.isAdmin()
+            && accessDatabase.createPoll(request.getPollName(), request.getCompanyName(),
+                                         request.getParameterNames())) {
             return new APIRequests(true, "Successfully added new Poll");
         }
         else {
