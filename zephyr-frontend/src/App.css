@@ -143,3 +143,15 @@ a:visited {
 .NewPoll-parameters button:disabled {
     visibility: hidden;
 }
+
+.VotingPage-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.VotingPage-choices {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+}

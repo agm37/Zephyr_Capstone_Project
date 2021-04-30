@@ -141,15 +141,15 @@ class VotingPage extends Component {
     renderVotingForm = () => {
         return (
             <div>
-                <form onSubmit={this.formSubmit}>
-                    <div>
-                        {this.renderVotingOptions()}
-                    </div>
+                <form onSubmit={this.formSubmit} className="VotingPage-form">
                     {
                         this.state.selectedOption !== null
                         ? <p>Selected option is: {this.state.selectedOption}</p>
                         : <p>Select an option to continue</p>
                     }
+                    <div className="VotingPage-choices">
+                        {this.renderVotingOptions()}
+                    </div>
                     <button disabled={this.state.selectedOption === null}
                             className="btn btn-default" type="submit">
                         Submit
@@ -190,7 +190,7 @@ class VotingPage extends Component {
 
     renderDefaultView = () => {
         return(
-            <p>no poll found</p>
+            <p>Loading poll choices...</p>
         )
     }
 
