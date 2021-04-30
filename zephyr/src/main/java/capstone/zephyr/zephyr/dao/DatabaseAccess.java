@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import capstone.zephyr.zephyr.model.LoginModel;
+import capstone.zephyr.zephyr.model.ShareholderModel;
 
 @Service
 public class DatabaseAccess {
@@ -54,8 +55,7 @@ public class DatabaseAccess {
             shareholderID = Optional.empty();
         }
 
-        return new LoginModel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getBoolean(4),
-                                shareholderID);
+        return new LoginModel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getBoolean(4), shareholderID);
     }
 
     public LoginModel queryLoginByUserName(String userName) {
@@ -82,6 +82,22 @@ public class DatabaseAccess {
     }
 
 
+    //****Shareholder Information Queries (Setters)****\\
+    @Transactional
+    public void addShareholder(ShareholderModel shareholder) {
+        String sqlString = "INSERT INTO shareholder_info (shareholder_id, shareholder_name, company_name, num_shares) VALUES (?,?,?,?);";
+
+        databaseTemplate.execute(sqlString, (PreparedStatement sqlInsert) -> {
+            sqlInsert.setInt(1, shareholder.getShareholderID());
+            sqlInsert.setString(2, shareholder.getShareholderName());
+            sqlInsert.setString(3, shareholder.getCompanyName());
+            sqlInsert.setInt(4, shareholder.getNumberOfShares());
+        
+            return sqlInsert.execute();
+        });
+    }
+
+
     //****Shareholder Information Queries (Getters)****\\
 
     public String queryShareholderName(int shareHolderID) {
@@ -99,6 +115,12 @@ public class DatabaseAccess {
         return queryForObjectOrNull(sqlString, Integer.class, shareHolderID);
     }
 
+    public int getMaxShareholderID() {
+        String sqlString = "SELECT MAX(shareholder_id) FROM shareholder_info;";
+        return queryForObjectOrNull(sqlString, Integer.class);
+    }
+
+
     //****Shareholder Poll Status Select/Insert Queries****\\
 
     public boolean queryHasShareholderVotedInPoll(int shareholderID, int pollID) {
@@ -114,6 +136,13 @@ public class DatabaseAccess {
 
 
     //****Vote Information Queries (Getters)****\\
+
+    public boolean queryIsPollClosed(int pollID) {
+        String sqlString = "SELECT is_closed FROM vote_info WHERE poll_id = ?";
+
+        Integer result = queryForObjectOrNull(sqlString, Integer.class, pollID);
+        return result != null && result == 1;
+    }
 
     public ArrayList<String> queryVoteParameter(int pollID) {
         String sqlString = "SELECT parameter_name_1, parameter_name_2, parameter_name_3, parameter_name_4, parameter_name_5, parameter_name_6, parameter_name_7, parameter_name_8, parameter_name_9, parameter_name_10 FROM vote_count WHERE poll_id = ?;";
@@ -174,6 +203,7 @@ public class DatabaseAccess {
         setShareholderVoteStatus(shareholderID, pollID);
     }
 
+
     //****Poll Creation Query (Initial Setter)****\\
 
     @Transactional
@@ -187,6 +217,12 @@ public class DatabaseAccess {
         return true;
     }
 
+    public boolean closePoll(int pollID) {
+        String sqlString = "UPDATE vote_info SET is_closed = 1 WHERE poll_id = ?";
+        int rowsAffected = databaseTemplate.update(sqlString, pollID);
+        return rowsAffected == 1;
+    }
+
     private Optional<Integer> insertPollInfo(String pollName, String companyName) {
         String sqlString = "INSERT INTO vote_info (poll_name, company_name) VALUES (?,?);";
 
@@ -194,15 +230,13 @@ public class DatabaseAccess {
 
         int rowsAffected = databaseTemplate.update(
             (Connection connection) -> {
-                PreparedStatement sqlInsert = connection.prepareStatement(
-                    sqlString, Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement sqlInsert = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
                 sqlInsert.setString(1, pollName);
                 sqlInsert.setString(2, companyName);
                 return sqlInsert;
             },
             keyHolder);
         if (rowsAffected != 1) {
-            System.out.println("UPDATE FAILED, RETURNED ROWS AFFECTED " + rowsAffected);
             return Optional.empty();
         }
 
