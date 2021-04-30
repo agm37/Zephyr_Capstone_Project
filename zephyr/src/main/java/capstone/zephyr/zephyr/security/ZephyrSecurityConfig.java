@@ -1,5 +1,7 @@
 package capstone.zephyr.zephyr.security;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -45,6 +47,8 @@ public class ZephyrSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
             .logout()
                 .permitAll()
+                .logoutSuccessHandler((req, resp, auth) ->
+                    resp.setStatus(HttpServletResponse.SC_OK))
                 .and()
             .exceptionHandling()
                 .authenticationEntryPoint(errorHandler.authenticationEntryPoint())
