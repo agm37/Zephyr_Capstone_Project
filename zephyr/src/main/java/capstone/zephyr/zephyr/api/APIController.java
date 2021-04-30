@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import capstone.zephyr.zephyr.dao.DatabaseAccess;
 import capstone.zephyr.zephyr.model.LoginModel;
+import capstone.zephyr.zephyr.requests.ClosePollRequest;
 import capstone.zephyr.zephyr.model.ShareholderModel;
 import capstone.zephyr.zephyr.requests.CreatePollRequest;
 import capstone.zephyr.zephyr.requests.InputShareholdersRequest;
 import capstone.zephyr.zephyr.requests.LoginRequest;
 import capstone.zephyr.zephyr.requests.PollInfoRequest;
-import capstone.zephyr.zephyr.requests.ShareholderInfoRequest;
 import capstone.zephyr.zephyr.requests.ShareholderVotingRequest;
 
 
@@ -54,39 +54,69 @@ public class APIController {
 
     @PostMapping("/checkAdmin")
     @ResponseBody
-    public int checkAdminStatus(String user_name) {
-        return accessDatabase.queryAdminStatus(user_name);
+    public int checkAdminStatus(@AuthenticationPrincipal LoginModel login) {
+        return accessDatabase.queryAdminStatus(login.getUsername());
     }
 
     @PostMapping("/getNumShares")
     @ResponseBody
-    public int getNumberOfShares(int shareholder_id) {
-        return accessDatabase.queryShareholderShares(shareholder_id);
+    public int getNumberOfShares(@AuthenticationPrincipal LoginModel login) {
+        if (login.getShareholderID().isEmpty()) {
+            return 0;
+        }
+
+        return accessDatabase.queryShareholderShares(login.getShareholderID().get());
     }
 
     @PostMapping("/getShareholderInfo")
     @ResponseBody
-    public List<Object> getShareholderInfo(@RequestBody ShareholderInfoRequest request) {
-        return request.getShareholderInfo();
+    public List<Object> getShareholderInfo(@AuthenticationPrincipal LoginModel login) {
+        List<Object> results = new ArrayList<>();
+
+        if (login.getShareholderID().isPresent()) {
+            int shareholderID = login.getShareholderID().get();
+            results.add(accessDatabase.queryShareholderName(shareholderID));
+            results.add(accessDatabase.queryShareholderCompany(shareholderID));
+            results.add(accessDatabase.queryShareholderShares(shareholderID));
+        }
+
+        return results;
     }
 
     @GetMapping("/pollInfo")
     @ResponseBody
     public APIRequests getPollInfo(@RequestBody PollInfoRequest request) {
         ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(request.getPollID());
-        ArrayList<Integer> voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
+        ArrayList<Integer> voteCountResponse = null;
+        if (accessDatabase.queryIsPollClosed(request.getPollID())) {
+            voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
+        }
 
         return new APIRequests(parameterResponse, voteCountResponse);
     }
 
     @PostMapping("/createPoll")
     @ResponseBody
-    public APIRequests createPoll(@RequestBody CreatePollRequest request) {
-        if (accessDatabase.createPoll(request.getPollName(), request.getCompanyName(), request.getParameterNames())) {
+    public APIRequests createPoll(@RequestBody CreatePollRequest request,
+                                  @AuthenticationPrincipal LoginModel login) {
+        if (login.isAdmin()
+            && accessDatabase.createPoll(request.getPollName(), request.getCompanyName(),
+                                         request.getParameterNames())) {
             return new APIRequests(true, "Successfully added new Poll");
         }
         else {
             return new APIRequests(false, "Failed to create new Poll");
+        }
+    }
+
+    @PostMapping("/closePoll")
+    @ResponseBody
+    public APIRequests closePoll(@RequestBody ClosePollRequest request,
+                                 @AuthenticationPrincipal LoginModel login) {
+        if (login.isAdmin() && accessDatabase.closePoll(request.getPollID())) {
+            return new APIRequests(true, "Successfully closed poll");
+        } else {
+            return new APIRequests(false, "Failed to close poll");
         }
     }
 
