@@ -20,7 +20,6 @@ import capstone.zephyr.zephyr.model.LoginModel;
 import capstone.zephyr.zephyr.requests.CreatePollRequest;
 import capstone.zephyr.zephyr.requests.LoginRequest;
 import capstone.zephyr.zephyr.requests.PollInfoRequest;
-import capstone.zephyr.zephyr.requests.ShareholderInfoRequest;
 import capstone.zephyr.zephyr.requests.ShareholderVotingRequest;
 
 
@@ -51,20 +50,33 @@ public class APIController {
 
     @PostMapping("/checkAdmin")
     @ResponseBody
-    public int checkAdminStatus(String user_name) {
-        return accessDatabase.queryAdminStatus(user_name);
+    public int checkAdminStatus(@AuthenticationPrincipal LoginModel login) {
+        return accessDatabase.queryAdminStatus(login.getUsername());
     }
 
     @PostMapping("/getNumShares")
     @ResponseBody
-    public int getNumberOfShares(int shareholder_id) {
-        return accessDatabase.queryShareholderShares(shareholder_id);
+    public int getNumberOfShares(@AuthenticationPrincipal LoginModel login) {
+        if (login.getShareholderID().isEmpty()) {
+            return 0;
+        }
+
+        return accessDatabase.queryShareholderShares(login.getShareholderID().get());
     }
 
     @PostMapping("/getShareholderInfo")
     @ResponseBody
-    public List<Object> getShareholderInfo(@RequestBody ShareholderInfoRequest request) {
-        return request.getShareholderInfo();
+    public List<Object> getShareholderInfo(@AuthenticationPrincipal LoginModel login) {
+        List<Object> results = new ArrayList<>();
+
+        if (login.getShareholderID().isPresent()) {
+            int shareholderID = login.getShareholderID().get();
+            results.add(accessDatabase.queryShareholderName(shareholderID));
+            results.add(accessDatabase.queryShareholderCompany(shareholderID));
+            results.add(accessDatabase.queryShareholderShares(shareholderID));
+        }
+
+        return results;
     }
 
     @PostMapping("/pollInfo")
