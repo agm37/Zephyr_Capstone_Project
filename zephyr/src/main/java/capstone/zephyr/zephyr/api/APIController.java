@@ -47,7 +47,7 @@ public class APIController {
             SecurityContextHolder.clearContext();
             return new APIRequests(false, "Not authenticated");
         }
-
+        
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return new APIRequests(true, "Successfully authenticated");
     }
@@ -64,7 +64,6 @@ public class APIController {
         if (login.getShareholderID().isEmpty()) {
             return 0;
         }
-
         return accessDatabase.queryShareholderShares(login.getShareholderID().get());
     }
 
@@ -79,7 +78,6 @@ public class APIController {
             results.add(accessDatabase.queryShareholderCompany(shareholderID));
             results.add(accessDatabase.queryShareholderShares(shareholderID));
         }
-
         return results;
     }
 
