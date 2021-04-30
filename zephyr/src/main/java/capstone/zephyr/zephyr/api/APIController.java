@@ -88,7 +88,7 @@ public class APIController {
     public APIRequests getPollInfo(@RequestBody PollInfoRequest request) {
         ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(request.getPollID());
         ArrayList<Integer> voteCountResponse = null;
-        if (accessDatabase.queryIsPollClosed(request.getPollID())) {
+        if (accessDatabase.queryIsPollClosed(request.getPollID()) == false) {
             voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
         }
 
