@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import Dashboard from './Dashboard';
 import VotingPage from './VotingPage';
 import LoginPage from './LoginPage'
 import VotingResults from './VotingResults'
@@ -22,10 +23,13 @@ function App() {
 
                     <Route
                         exact
-                        path="/votingresults" >
-                            <VotingResults pollID={1}/>
-                        
-                    </Route>
+                        path="/dashboard"
+                        component={Dashboard} />
+
+                    <Route
+                        exact
+                        path="/votingresults/:pollID"
+                        component={VotingResults} />
 
                     {/* <Route
                         exact
@@ -35,7 +39,7 @@ function App() {
 
                     <Route
                         exact
-                        path="/votingpage"
+                        path="/votingpage/:pollID"
                         component={VotingPage}
                     />
 

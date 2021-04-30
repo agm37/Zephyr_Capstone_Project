@@ -8,28 +8,25 @@ class VotingResults extends Component {
         this.state = {
             Polls: [],
             hasPolls: false,
-            pollID: 0
+            pollID: parseInt(props?.match?.params?.pollID || '0'),
         }
 
-        this.state.pollID = props.pollID ? props.pollID : 0
-
         console.log(this.state.pollID)
-
-        this.GetVotes()
     }
 
+    async componentDidMount() {
+        await this.GetVotes();
+    }
 
-
-        
     async GetVotes() {
-        
-       
+
+
         try {
             let response = await fetch(`${process.env.REACT_APP_SERVER}/pollInfo`, {  //add a route for polls to be taken from
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'                 
+                    'Content-Type': 'application/json'
 
                 },
                 body: JSON.stringify({
@@ -43,7 +40,7 @@ class VotingResults extends Component {
 
             this.state.Polls = await response.json()
             console.log(this.state.Polls);
-            
+
             if(this.state.Polls.parameters.length !== 0) {
                 this.setState({
                     hasPolls: true
@@ -83,13 +80,13 @@ class VotingResults extends Component {
                     </React.Fragment>
 
                 ))}
-                
+
 
             </div>
         )
     }
 
- 
+
 
     renderDefaultView = () => {
         return(
@@ -106,7 +103,7 @@ class VotingResults extends Component {
         return this.state.hasPolls ?
         this.renderPollResuts() :
         this.renderDefaultView()
-    
+
     }
 
 

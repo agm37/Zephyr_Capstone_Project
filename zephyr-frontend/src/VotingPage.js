@@ -1,42 +1,36 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import './App.css';
 
 class VotingPage extends Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            content: null,  
-            pollID: 1,
+        console.log(props);
+        this.state = {
+            content: null,
             goodVote: false,
-            Polls: [],
+            Polls: { parameters: [] },
             hasPolls: false,
             selectedOption: null,
-            paramNum: 0
+            paramNum: 0,
+            pollID: parseInt(props?.match?.params?.pollID || '0'),
         }
-
-        //this.state.pollID = props.pollID ? props.pollID : 0
 
         this.formSubmit = this.formSubmit.bind(this)
         this.onValueChange = this.onValueChange.bind(this)
-        
-        this.GetParameters()
     }
 
+    async componentDidMount() {
+        await this.GetParameters();
+    }
 
-
-
-
-          
     async GetParameters() {
-        
-         
-       
         try {
             let response = await fetch(`${process.env.REACT_APP_SERVER}/pollInfo`, {  //add a route for polls to be taken from
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'                 
+                    'Content-Type': 'application/json'
 
                 },
                 body: JSON.stringify({
@@ -50,7 +44,7 @@ class VotingPage extends Component {
 
             this.state.Polls = await response.json()
             console.log(this.state.Polls);
-            
+
             if(this.state.Polls.length !== 0) {
                 this.setState({
                     hasPolls: true
@@ -80,13 +74,10 @@ class VotingPage extends Component {
         event.stopPropagation();
 
         try {
-
-
-
+            let paramNum;
             for( let i = 0; i < this.state.Polls.parameters.length; i++) {
                 if(this.state.selectedOption === this.state.Polls.parameters[i]){
-                    this.state.paramNum = i
-                   
+                    paramNum = i
                     break
                 }
             }
@@ -96,12 +87,12 @@ class VotingPage extends Component {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'                 
+                    'Content-Type': 'application/json'
 
                 },
                 body: JSON.stringify({
                     pollID: this.state.pollID,
-                    parameterNum: this.state.paramNum,
+                    parameterNum: paramNum,
 
                 }),
                 credentials: 'include'
@@ -109,16 +100,16 @@ class VotingPage extends Component {
             })
 
             console.log("vote sent")
-            console.log("Param num is:" + this.state.paramNum)
+            console.log("Param num is:" + paramNum)
             console.log("Vote is for:" + this.state.selectedOption)
 
- 
+
             console.log(response);
 
-            this.state.goodVote = response ? true: false
+            if ((await response.json()).response) {
+                this.props.history.push('/dashboard');
+            }
 
-            console.log(this.state.goodVote)
-           
 
 
         } catch (ex) {
@@ -132,12 +123,12 @@ class VotingPage extends Component {
         this.setState({
             selectedOption: event.target.value
 
-            
+
         });
 
-        
-       
-        
+
+
+
     }
 
 
@@ -153,12 +144,17 @@ class VotingPage extends Component {
                     <div>
                         {this.renderVotingOptions()}
                     </div>
-                    <p>Selected option is: {this.state.selectedOption}</p>
-                    <button className="btn btn-default" type="submit">
+                    {
+                        this.state.selectedOption !== null
+                        ? <p>Selected option is: {this.state.selectedOption}</p>
+                        : <p>Select an option to continue</p>
+                    }
+                    <button disabled={this.state.selectedOption === null}
+                            className="btn btn-default" type="submit">
                         Submit
                     </button>
                 </form>
-              
+
             </div>
         )
 
@@ -167,24 +163,26 @@ class VotingPage extends Component {
     renderVotingOptions = () => {
         return (
 
-                this.state.Polls.parameters.map((element,index) => (
-                    <React.Fragment key={index}>
-                        <div className="radio" >
-                            <label>
-                                <input
-                                    type="radio"
-                                    value={element}
-                                    checked={this.state.selectedOption === {element}}
-                                    onChange={this.onValueChange} 
-                                    
-                                    />
-                                    {element}
-                            </label>                
+                this.state.Polls.parameters
+                    .filter(element => element.length !== 0)
+                    .map((element,index) => (
+                        <React.Fragment key={index}>
+                            <div className="radio" >
+                                <label>
+                                    <input
+                                        type="radio"
+                                        value={element}
+                                        checked={this.state.selectedOption === element}
+                                        onChange={this.onValueChange}
 
-                        </div>
-                    </React.Fragment>
-                    
-                ))
+                                        />
+                                        {element}
+                                </label>
+
+                            </div>
+                        </React.Fragment>
+
+                    ))
         )
     }
 
@@ -199,9 +197,9 @@ class VotingPage extends Component {
         return this.state.hasPolls ?
         this.renderVotingForm() :
         this.renderDefaultView()
-     
-        
+
+
     }
 }
 
-export default VotingPage;
+export default withRouter(VotingPage);
