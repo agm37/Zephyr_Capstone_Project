@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,13 +59,13 @@ public class APIController {
         return new APIRequests(true, "Successfully authenticated");
     }
 
-    @PostMapping("/checkAdmin")
+    @GetMapping("/checkAdmin")
     @ResponseBody
     public int checkAdminStatus(@AuthenticationPrincipal LoginModel login) {
         return accessDatabase.queryAdminStatus(login.getUsername());
     }
 
-    @PostMapping("/getNumShares")
+    @GetMapping("/getNumShares")
     @ResponseBody
     public int getNumberOfShares(@AuthenticationPrincipal LoginModel login) {
         if (login.getShareholderID().isEmpty()) {
@@ -73,7 +74,7 @@ public class APIController {
         return accessDatabase.queryShareholderShares(login.getShareholderID().get());
     }
 
-    @PostMapping("/getShareholderInfo")
+    @GetMapping("/getShareholderInfo")
     @ResponseBody
     public List<Object> getShareholderInfo(@AuthenticationPrincipal LoginModel login) {
         List<Object> results = new ArrayList<>();
