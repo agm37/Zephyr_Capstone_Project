@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Pie } from 'react-chartjs-2';
 import './App.css';
 
 class VotingResults extends Component {
@@ -58,14 +59,47 @@ class VotingResults extends Component {
 
 
     renderPollResuts = () => {
+        let totalVotes = this.state.Polls.voteCount.reduce((a, b) => a + b, 0);
+        if (totalVotes === 0) {
+            return (
+                <p>No votes were cast.</p>
+            );
+        }
+
+        let filledParameters = this.state.Polls.parameters.filter(p => p).length;
+
+        // Colors from:
+        // https://tableaufriction.blogspot.com/2012/11/finally-you-can-use-tableau-data-colors.html
+        let data = {
+            labels: this.state.Polls.parameters.slice(0, filledParameters),
+            color: 'white',
+            datasets: [
+                {
+                    data: this.state.Polls.voteCount.slice(0, filledParameters),
+                    backgroundColor: [
+                        'rgb(255, 127, 14)',
+                        'rgb(214, 39, 40)',
+                        'rgb(148, 103, 189)',
+                        'rgb(44, 160, 44)',
+                        'rgb(31, 119, 180)',
+                        'rgb(227, 119, 194)',
+                        'rgb(188, 189, 134)',
+                        'rgb(140, 86, 75)',
+                        'rgb(127, 127, 127)',
+                        'rgb(23, 190, 207)',
+                    ],
+                }
+            ],
+        };
+
+        let options = {
+            color: 'white',
+        };
+
         return (
             <div>
-                <p>Hi this is the voting results page</p>
-                <p>Voting Results: </p>
-                <table>
-                    {this.PollTable()}
-                </table>
-
+                <h3>Voting Results:</h3>
+                <Pie data={data} options={options}/>
             </div>
         )
 
@@ -91,7 +125,6 @@ class VotingResults extends Component {
     renderDefaultView = () => {
         return(
             <div>
-                <p>Hi this is the voting results page</p>
                 <p>No search results found</p>
             </div>
 
