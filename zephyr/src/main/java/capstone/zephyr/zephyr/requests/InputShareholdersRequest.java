@@ -29,8 +29,8 @@ public class InputShareholdersRequest {
 
             while ((line = csvReader.readLine()) != null) {
                 minimumID = minimumID + 1;
-                String[] tempLine = line.split(",");
-                shareholders.add(new ShareholderModel(minimumID, tempLine[0], tempLine[1], Integer.parseInt(tempLine[2])));
+                String[] parsedLine = line.split(",");
+                shareholders.add(new ShareholderModel(minimumID, parsedLine[0], parsedLine[1], Integer.parseInt(parsedLine[2])));
             }
             csvReader.close();
             
