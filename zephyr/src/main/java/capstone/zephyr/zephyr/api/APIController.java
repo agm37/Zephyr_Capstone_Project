@@ -95,15 +95,22 @@ public class APIController {
 =======
         ArrayList<Integer> voteCountResponse = new ArrayList<Integer>();
 
-        //TODO Remove test code underneath 
-        voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
-
         if (accessDatabase.queryIsPollClosed(request.getPollID()) == true) {
             voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
         }
+<<<<<<< HEAD
 >>>>>>> b34684c19ee19449c92f73b514e4a5ae3255adea
 
+=======
+>>>>>>> 918e2726fd74ee162cf093a930aa33a7ac00334a
         return new APIRequests(parameterResponse, voteCountResponse);
+    }
+
+    @PostMapping("/parameterInfo")
+    @ResponseBody
+    public ArrayList<String> getPollInfo(@RequestBody int pollID) {
+        ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(pollID);
+        return parameterResponse;
     }
 
     @PostMapping("/createPoll")

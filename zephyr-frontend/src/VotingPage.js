@@ -10,7 +10,8 @@ class VotingPage extends Component {
             goodVote: false,
             Polls: [],
             hasPolls: false,
-            selectedOption: "none"
+            selectedOption: null,
+            paramNum: 0
         }
 
         //this.state.pollID = props.pollID ? props.pollID : 0
@@ -70,10 +71,13 @@ class VotingPage extends Component {
 
 
 
-    async formSubmit() {
+    async formSubmit(event) {
         //let response = await fetch(`${process.env.REACT_APP_SERVER}/zephyr`);
         //let { content } = await response.json();
         //this.setState({ content });
+
+        event.preventDefault();
+        event.stopPropagation();
 
         try {
             let response = await fetch(`${process.env.REACT_APP_SERVER}/shareholderVote`, {  //add a route for polls to be taken from
@@ -84,23 +88,27 @@ class VotingPage extends Component {
 
                 },
                 body: JSON.stringify({
-                    pollID: this.state.pollID
+                    pollID: this.state.pollID,
+                    parameterNum: this.state.paramNum,
+
                 }),
                 credentials: 'include'
 
             })
 
-            console.log("fectch sent")
+            console.log("vote sent")
 
  
             console.log(response);
 
             this.state.goodVote = response ? true: false
 
+            console.log(this.state.goodVote)
+
 
         } catch (ex) {
             console.error(ex);
-            console.log("fetch failed")
+            console.log("vote failed")
         }
 
     }
@@ -109,8 +117,20 @@ class VotingPage extends Component {
         this.setState({
             selectedOption: event.target.value
         });
+
+        for( let i = 0; i < this.state.Polls.parameters.length; i++) {
+            if(this.state.selectedOption === this.state.Polls.parameters[i]){
+                this.state.paramNum = i
+                break
+            }
+        }
+
+        console.log(this.state.paramNum)
+
+       
         
     }
+
 
 
 
@@ -122,10 +142,14 @@ class VotingPage extends Component {
             <div>
                 <form onSubmit={this.formSubmit}>
                     <div>
-                    {this.renderVotingOptions()}
+                        {this.renderVotingOptions()}
                     </div>
+                    <p>Selected option is: {this.state.selectedOption}</p>
+                    <button className="btn btn-default" type="submit">
+                        Submit
+                    </button>
                 </form>
-                <p>Selected option is: {this.state.selectedOption}</p>
+              
             </div>
         )
 
@@ -133,30 +157,41 @@ class VotingPage extends Component {
 
     renderVotingOptions = () => {
         return (
-            <div>
-            {this.state.Polls.parameters.map((element,index) => (
 
-                    <div className="radio">
-                    <label>
-                        <input
-                            type="radio"
-                            value={element}
-                            checked={this.state.selectedOption === {element}}
-                            onChange={this.onValueChange}
-                            key={index}
-                            />
-                            {element}
-                    </label>                
+                this.state.Polls.parameters.map((element,index) => (
+                    <React.Fragment key={index}>
+                        <div className="radio" >
+                            <label>
+                                <input
+                                    type="radio"
+                                    value={element}
+                                    checked={this.state.selectedOption === {element}}
+                                    onChange={this.onValueChange} 
+                                    
+                                    />
+                                    {element}
+                            </label>                
 
-                    </div>
-                
-             ))}
-             </div>
+                        </div>
+                    </React.Fragment>
+                    
+                ))
+        )
+    }
+
+
+    renderDefaultView = () => {
+        return(
+            <p>no poll found</p>
         )
     }
 
     render() {
-        return this.renderVotingForm()
+        return this.state.hasPolls ?
+        this.renderVotingForm() :
+        this.renderDefaultView()
+     
+        
     }
 }
 
