@@ -77,7 +77,8 @@ class VotingPage extends Component {
             let paramNum;
             for( let i = 0; i < this.state.Polls.parameters.length; i++) {
                 if(this.state.selectedOption === this.state.Polls.parameters[i]){
-                    paramNum = i
+                    // + 1 because parameters are 1-indexed.
+                    paramNum = i + 1
                     break
                 }
             }
