@@ -15,7 +15,7 @@ class Login extends Component {
             password: '',
          };
 
-         
+
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -25,8 +25,6 @@ class Login extends Component {
 
         event.preventDefault();
         event.stopPropagation();
-
-        console.log("username:" + this.state.username)
 
         let result;
         try {
@@ -45,7 +43,6 @@ class Login extends Component {
             })
 
             let content = await response.json()
-            console.log(content);
             result = content.response ? LoginResult.SUCCESS : LoginResult.FAILURE;
         } catch (ex) {
             result = LoginResult.ERROR;
