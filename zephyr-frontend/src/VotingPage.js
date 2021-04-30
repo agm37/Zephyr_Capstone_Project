@@ -133,8 +133,9 @@ class VotingPage extends Component {
 
     renderVotingOptions = () => {
         return (
-            this.state.Polls.parameters.map((element,index) => (
-                
+            <div>
+            {this.state.Polls.parameters.map((element,index) => (
+
                     <div className="radio">
                     <label>
                         <input
@@ -149,7 +150,8 @@ class VotingPage extends Component {
 
                     </div>
                 
-             ))
+             ))}
+             </div>
         )
     }
 
