@@ -80,6 +80,18 @@ class VotingPage extends Component {
         event.stopPropagation();
 
         try {
+
+
+
+            for( let i = 0; i < this.state.Polls.parameters.length; i++) {
+                if(this.state.selectedOption === this.state.Polls.parameters[i]){
+                    this.state.paramNum = i
+                   
+                    break
+                }
+            }
+
+
             let response = await fetch(`${process.env.REACT_APP_SERVER}/shareholderVote`, {  //add a route for polls to be taken from
                 method: 'POST',
                 headers: {
@@ -97,6 +109,8 @@ class VotingPage extends Component {
             })
 
             console.log("vote sent")
+            console.log("Param num is:" + this.state.paramNum)
+            console.log("Vote is for:" + this.state.selectedOption)
 
  
             console.log(response);
@@ -104,6 +118,7 @@ class VotingPage extends Component {
             this.state.goodVote = response ? true: false
 
             console.log(this.state.goodVote)
+           
 
 
         } catch (ex) {
@@ -116,17 +131,11 @@ class VotingPage extends Component {
     onValueChange(event) {
         this.setState({
             selectedOption: event.target.value
+
+            
         });
 
-        for( let i = 0; i < this.state.Polls.parameters.length; i++) {
-            if(this.state.selectedOption === this.state.Polls.parameters[i]){
-                this.state.paramNum = i
-                break
-            }
-        }
-
-        console.log(this.state.paramNum)
-
+        
        
         
     }
