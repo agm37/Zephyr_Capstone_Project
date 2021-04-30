@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import Login from './Login';
+import Login, { LoginResult } from './Login';
 
 class LoginPage extends Component {
     constructor(props) {
@@ -11,7 +11,11 @@ class LoginPage extends Component {
     }
 
     async handleLoginResult(result) {
-        this.setState({ result });
+        if (result === LoginResult.SUCCESS) {
+            this.props.history.push('/dashboard');
+        } else {
+            this.setState({ result });
+        }
     }
 
     render() {
@@ -19,7 +23,7 @@ class LoginPage extends Component {
             <div>
                 <Login onLoginResult={this.handleLoginResult}/>
                 {this.state.result ? (
-                    <p>Login result: {this.state.result}</p>
+                    <p>Login {this.state.result}</p>
                 ) : []}
             </div>
         );

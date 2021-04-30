@@ -5,25 +5,26 @@ import NewPoll from './NewPoll';
 class NewPollPage extends Component {
     constructor(props) {
         super(props);
-        this.state = { hasFailedAttempt: false };
+        this.state = { failed: false };
 
         this.handleCreateResult = this.handleCreateResult.bind(this);
     }
 
     handleCreateResult(result) {
-        this.setState({ result });
+        if (result) {
+            this.props.history.push('/dashboard');
+        } else {
+            this.setState({ failed: true });
+        }
     }
 
     render() {
         return (
             <div>
                 <NewPoll onResult={this.handleCreateResult}/>
-                {this.state.result !== null
-                    ? [
-                        this.state.result
-                            ? <p>Successfully created poll!</p>
-                            : <p>Failed to create poll</p>
-                    ] : []}
+                {this.state.failed
+                    ? (<p>Failed to create poll</p>)
+                    : []}
             </div>
         )
     }
