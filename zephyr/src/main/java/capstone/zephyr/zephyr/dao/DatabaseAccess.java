@@ -215,7 +215,6 @@ public class DatabaseAccess {
             },
             keyHolder);
         if (rowsAffected != 1) {
-            System.out.println("UPDATE FAILED, RETURNED ROWS AFFECTED " + rowsAffected);
             return Optional.empty();
         }
 
