@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import capstone.zephyr.zephyr.model.LoginModel;
+import capstone.zephyr.zephyr.model.ShareholderModel;
 
 @Service
 public class DatabaseAccess {
@@ -54,8 +55,7 @@ public class DatabaseAccess {
             shareholderID = Optional.empty();
         }
 
-        return new LoginModel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getBoolean(4),
-                                shareholderID);
+        return new LoginModel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getBoolean(4), shareholderID);
     }
 
     public LoginModel queryLoginByUserName(String userName) {
@@ -82,6 +82,22 @@ public class DatabaseAccess {
     }
 
 
+    //****Shareholder Information Queries (Setters)****\\
+    @Transactional
+    public void addShareholder(ShareholderModel shareholder) {
+        String sqlString = "INSERT INTO shareholder_info (shareholder_id, shareholder_name, company_name, num_shares) VALUES (?,?,?,?);";
+
+        databaseTemplate.execute(sqlString, (PreparedStatement sqlInsert) -> {
+            sqlInsert.setInt(1, shareholder.getShareholderID());
+            sqlInsert.setString(2, shareholder.getShareholderName());
+            sqlInsert.setString(3, shareholder.getCompanyName());
+            sqlInsert.setInt(4, shareholder.getNumberOfShares());
+        
+            return sqlInsert.execute();
+        });
+    }
+
+
     //****Shareholder Information Queries (Getters)****\\
 
     public String queryShareholderName(int shareHolderID) {
@@ -98,6 +114,12 @@ public class DatabaseAccess {
         String sqlString = "SELECT num_shares FROM shareholder_info WHERE shareholder_id = ?;";
         return queryForObjectOrNull(sqlString, Integer.class, shareHolderID);
     }
+
+    public int getMaxShareholderID() {
+        String sqlString = "SELECT MAX(shareholder_id) FROM shareholder_info;";
+        return queryForObjectOrNull(sqlString, Integer.class);
+    }
+
 
     //****Shareholder Poll Status Select/Insert Queries****\\
 
@@ -180,6 +202,7 @@ public class DatabaseAccess {
         updateVotes(pollID, voteParameterNum, voteCount);
         setShareholderVoteStatus(shareholderID, pollID);
     }
+
 
     //****Poll Creation Query (Initial Setter)****\\
 
