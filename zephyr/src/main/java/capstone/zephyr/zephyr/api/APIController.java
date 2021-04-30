@@ -83,14 +83,14 @@ public class APIController {
         return results;
     }
 
-    @GetMapping("/pollInfo")
+    @PostMapping("/pollInfo")
     @ResponseBody
     public APIRequests getPollInfo(@RequestBody PollInfoRequest request) {
         ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(request.getPollID());
-        ArrayList<Integer> voteCountResponse = null;
-        if (accessDatabase.queryIsPollClosed(request.getPollID())) {
-            voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
-        }
+        ArrayList<Integer> voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
+        // if (accessDatabase.queryIsPollClosed(request.getPollID())) {
+        //     voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
+        // }
 
         return new APIRequests(parameterResponse, voteCountResponse);
     }
