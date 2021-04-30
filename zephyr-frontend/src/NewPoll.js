@@ -122,7 +122,8 @@ class NewPoll extends Component {
                     {
                         this.state.parameters.map((param, index) => (
                             <div
-                                className="form-input-wrapper">
+                                className="form-input-wrapper"
+                                key={index}>
                                 <input
                                     data-testid={`param-${index}`} name={`param-${index}`}
                                     type="text" value={param} required
