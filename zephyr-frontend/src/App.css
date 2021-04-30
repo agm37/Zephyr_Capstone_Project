@@ -36,6 +36,11 @@ input[type='submit']:active {
     background-color: #006433;
 }
 
+button:disabled {
+    background-color: gray;
+    filter: brightness(50%);
+}
+
 button.button-round {
     background-color: transparent;
     border: solid #014222 2px;
