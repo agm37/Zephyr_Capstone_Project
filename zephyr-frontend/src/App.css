@@ -5,14 +5,8 @@
 }
 
 .App-logo {
-    height: 40vmin;
+    height: 25vmin;
     pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
 }
 
 button,
@@ -97,16 +91,18 @@ a:visited {
     vertical-align: middle;
 }
 
-.App-header {
-    background-color: #15171c;
+.App {
+    padding: 72px;
     min-height: 100vh;
+    box-sizing: border-box;
+    background-color: #15171c;
+    font-size: calc(10px + 2vmin);
+    color: white;
+    font-family: Nunito, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-    font-family: Nunito, sans-serif;
 }
 
 .App-header h1 {
@@ -115,15 +111,6 @@ a:visited {
 
 .App-link {
     color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
 }
 
 .NewPoll-parameters {

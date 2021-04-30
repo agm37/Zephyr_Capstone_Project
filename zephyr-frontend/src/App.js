@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Dashboard from './Dashboard';
 import VotingPage from './VotingPage';
 import LoginPage from './LoginPage'
@@ -13,7 +13,9 @@ function App() {
             <div className="App">
                 <header className="App-header">
                     <img src={logo} className="App-logo" alt="logo" />
+                </header>
 
+                <Switch>
                     <Route
                         exact
                         path="/"
@@ -48,8 +50,7 @@ function App() {
                         path="/login"
                         component={LoginPage}
                     />
-
-                </header>
+                </Switch>
             </div>
         </Router>
     );
