@@ -143,7 +143,12 @@ public class APIController {
 
     @PostMapping("/addShareholders")
     @ResponseBody
-    public APIRequests addShareholders(@RequestParam("file") MultipartFile file) {
+    public APIRequests addShareholders(@RequestParam("file") MultipartFile file,
+                                       @AuthenticationPrincipal LoginModel login) {
+        if (!login.isAdmin()) {
+            return new APIRequests(false, "Failed to add shareholders");
+        }
+
         String csvData;
         try {
             csvData = new String(file.getBytes());
