@@ -24,6 +24,7 @@ class Dashboard extends Component {
         this.handleOpenUpload = this.handleOpenUpload.bind(this);
         this.handleUpload = this.handleUpload.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.handleLogout = this.handleLogout.bind(this);
 
         this.fileUploadRef = createRef();
     }
@@ -43,7 +44,14 @@ class Dashboard extends Component {
 
         let [isAdmin, shareholderInfo, pollList] = await Promise.all(
                 [isAdminPromise, shareholderInfoPromise, pollListPromise]
-                    .map(promise => promise.then(reply => reply.json())));
+                    .map(promise =>
+                            promise.then(reply => reply.ok ? reply.json() : undefined)));
+
+        if (isAdmin === undefined || shareholderInfo === undefined || pollList === undefined) {
+            console.error('Requests failed, auth error?');
+            this.props.history.push('/login');
+            return;
+        }
 
         this.setState({
             isAdmin, shareholderInfo, pollList,
@@ -108,6 +116,19 @@ class Dashboard extends Component {
         });
         let newPolls = await response.json();
         this.setState({ pollList: newPolls });
+    }
+
+    async handleLogout() {
+        let response = await fetch(`${process.env.REACT_APP_SERVER}/logout`, {
+            method: 'POST',
+            credentials: 'include',
+        });
+
+        if (response.ok) {
+            this.props.history.push('/login');
+        } else {
+            console.error('Failed to log out?');
+        }
     }
 
     get shouldDisableControls() {
@@ -215,6 +236,8 @@ class Dashboard extends Component {
                         : []
                 }
                 {this.renderPollSection({isActive: false})}
+
+                <button onClick={this.handleLogout}>Log out</button>
             </div>
         );
     }
