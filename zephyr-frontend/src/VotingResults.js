@@ -94,6 +94,16 @@ class VotingResults extends Component {
 
         let options = {
             color: 'white',
+            plugins: {
+                legend: {
+                    labels: {
+                        font: {
+                            family: 'Nunito, sans-serif',
+                            size: 14,
+                        },
+                    },
+                },
+            },
         };
 
         return (
@@ -125,7 +135,7 @@ class VotingResults extends Component {
     renderDefaultView = () => {
         return(
             <div>
-                <p>No search results found</p>
+                <p>Loading poll results...</p>
             </div>
 
         )
