@@ -14,10 +14,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import capstone.zephyr.zephyr.dao.DatabaseAccess;
 import capstone.zephyr.zephyr.model.LoginModel;
+import capstone.zephyr.zephyr.model.ShareholderModel;
 import capstone.zephyr.zephyr.requests.CreatePollRequest;
+import capstone.zephyr.zephyr.requests.InputShareholdersRequest;
 import capstone.zephyr.zephyr.requests.LoginRequest;
 import capstone.zephyr.zephyr.requests.PollInfoRequest;
 import capstone.zephyr.zephyr.requests.ShareholderInfoRequest;
@@ -67,7 +70,7 @@ public class APIController {
         return request.getShareholderInfo();
     }
 
-    @PostMapping("/pollInfo")
+    @GetMapping("/pollInfo")
     @ResponseBody
     public APIRequests getPollInfo(@RequestBody PollInfoRequest request) {
         ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(request.getPollID());
@@ -89,8 +92,7 @@ public class APIController {
 
     @PostMapping("/shareholderVote")
     @ResponseBody
-    public APIRequests shareholderVoting(@RequestBody ShareholderVotingRequest request,
-                                         @AuthenticationPrincipal LoginModel login) {
+    public APIRequests shareholderVoting(@RequestBody ShareholderVotingRequest request, @AuthenticationPrincipal LoginModel login) {
         if (login.getShareholderID().isPresent()
             && !accessDatabase.queryHasShareholderVotedInPoll(
                     login.getShareholderID().get(), request.getPollID())) {
@@ -99,5 +101,20 @@ public class APIController {
         } else {
             return new APIRequests(false, "Failed to add Votes");
         }
+    }
+
+    @PostMapping("/addShareholders")
+    @ResponseBody
+    public APIRequests addShareholders(@RequestBody InputShareholdersRequest request) {
+        request.setMinimumID(accessDatabase.getMaxShareholderID());
+        ArrayList<ShareholderModel> shareholderList = request.getShareholders();
+
+        for (int i = 0; i < shareholderList.size(); i++) {
+            accessDatabase.addShareholder(shareholderList.get(i));
+        }
+
+        //TODO create default login for each Shareholder
+        
+        return new APIRequests(true, "Successfully added Shareholders");
     }
 }
