@@ -79,7 +79,7 @@ class VotingResults extends Component {
             <div>
                 {this.state.Polls.parameters.map((element,index) => (
                     <React.Fragment key={index}>
-                        <dd className="Parameters">Parameters: {element}   VoteCount: {this.state.Polls.voteCount[index]}</dd>
+                        <dd className="Parameters">Parameters: {element}   |VoteCount: {this.state.Polls.voteCount[index]}</dd>
                     </React.Fragment>
 
                 ))}
