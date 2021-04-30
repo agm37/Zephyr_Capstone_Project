@@ -65,6 +65,11 @@ button.button-round.button-small {
     margin: 8px;
 }
 
+a,
+a:visited {
+    color: #579aff;
+}
+
 .form-input-wrapper {
     display: flex;
     flex-direction: row;
