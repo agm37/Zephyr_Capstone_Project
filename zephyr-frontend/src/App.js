@@ -23,8 +23,8 @@ function App() {
                     <Route
                         exact
                         path="/votingresults" >
-                            <VotingResults pollID={1010101}/>
-
+                            <VotingResults pollID={1}/>
+                        
                     </Route>
 
                     {/* <Route

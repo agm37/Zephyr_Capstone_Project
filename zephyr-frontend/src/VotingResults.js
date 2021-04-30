@@ -66,7 +66,7 @@ class VotingResults extends Component {
                 <p>Hi this is the voting results page</p>
                 <p>Voting Results: </p>
                 <table>
-                    {this.PollTable}
+                    {this.PollTable()}
                 </table>
 
             </div>
@@ -77,12 +77,9 @@ class VotingResults extends Component {
     PollTable = () => {
         return (
             <div>
-                {this.state.Polls.map(element => (
-                    <React.Fragment key={element.column.poll_id}>
-                        <dd>ID: {element.column.poll_id}</dd>
-                        <dd>Votes sent: {element.column.num_votes}</dd>
-                        <dd>Votes remaining: {element.column.num_votes_remaining}</dd>
-
+                {this.state.Polls.parameters.map((element,index) => (
+                    <React.Fragment key={index}>
+                        <dd className="Parameters">Parameters: {element}   |VoteCount: {this.state.Polls.voteCount[index]}</dd>
                     </React.Fragment>
 
                 ))}
