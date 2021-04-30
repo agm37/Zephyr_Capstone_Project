@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import capstone.zephyr.zephyr.dao.DatabaseAccess;
 import capstone.zephyr.zephyr.model.LoginModel;
+import capstone.zephyr.zephyr.model.PollMetadataModel;
 import capstone.zephyr.zephyr.model.ShareholderModel;
 import capstone.zephyr.zephyr.requests.ClosePollRequest;
 import capstone.zephyr.zephyr.requests.CreatePollRequest;
@@ -86,6 +87,16 @@ public class APIController {
             results.add(accessDatabase.queryShareholderShares(shareholderID));
         }
         return results;
+    }
+
+    @GetMapping("/listPolls")
+    @ResponseBody
+    public List<PollMetadataModel> listPolls(@AuthenticationPrincipal LoginModel login) {
+        if (login.getShareholderID().isPresent()) {
+            return accessDatabase.queryAllPollsAndVoteStatus(login.getShareholderID().get());
+        } else {
+            return accessDatabase.queryAllPolls();
+        }
     }
 
     @PostMapping("/pollInfo")

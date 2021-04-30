@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import capstone.zephyr.zephyr.model.LoginModel;
+import capstone.zephyr.zephyr.model.PollMetadataModel;
 import capstone.zephyr.zephyr.model.ShareholderModel;
 
 @Service
@@ -146,6 +147,30 @@ public class DatabaseAccess {
 
 
     //****Vote Information Queries (Getters)****\\
+
+    private static PollMetadataModel pollMetadataRowMapper(ResultSet rs, int rowNum) throws SQLException {
+        boolean alreadyVoted = false;
+        if (rs.getMetaData().getColumnCount() > 3) {
+            rs.getInt(4);
+            alreadyVoted = !rs.wasNull();
+        }
+
+        return new PollMetadataModel(rs.getInt(1), rs.getString(2), rs.getInt(3) != 1,
+                                     alreadyVoted);
+    }
+
+    public List<PollMetadataModel> queryAllPolls() {
+        String sqlString = "SELECT poll_id, poll_name, is_closed FROM vote_info";
+        return databaseTemplate.query(sqlString, DatabaseAccess::pollMetadataRowMapper);
+    }
+
+    public List<PollMetadataModel> queryAllPollsAndVoteStatus(int shareholderID) {
+        String sqlString = "SELECT vote_info.poll_id, vote_info.poll_name, vote_info.is_closed, shareholder_votes.poll_id"
+                                + " FROM vote_info LEFT JOIN shareholder_votes"
+                                + " ON vote_info.poll_id = shareholder_votes.poll_id"
+                                + " AND shareholder_votes.shareholder_id = ?";
+        return databaseTemplate.query(sqlString, DatabaseAccess::pollMetadataRowMapper, shareholderID);
+    }
 
     public boolean queryIsPollClosed(int pollID) {
         String sqlString = "SELECT is_closed FROM vote_info WHERE poll_id = ?";
