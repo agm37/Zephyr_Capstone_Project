@@ -110,10 +110,11 @@ class NewPoll extends Component {
 
                 <div className="NewPoll-parameters">
                     <h3>
-                        <span className="middle-align">Parameters:</span>
+                        <span className="middle-align">Poll Choices:</span>
 
                         <button
                             className="button-round button-small middle-align"
+                            disabled={this.state.parameters.length >= 10}
                             onClick={this.handleAddParameter}>
                             <span className="middle-align">+</span>
                         </button>
@@ -127,6 +128,7 @@ class NewPoll extends Component {
                                 <input
                                     data-testid={`param-${index}`} name={`param-${index}`}
                                     type="text" value={param} required
+                                    placeholder={`Choice #${index + 1}`}
                                     onChange={this.handleParamChange} />
 
                                 <button
