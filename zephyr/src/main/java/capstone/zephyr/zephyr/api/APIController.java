@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import capstone.zephyr.zephyr.dao.DatabaseAccess;
 import capstone.zephyr.zephyr.model.LoginModel;
-import capstone.zephyr.zephyr.requests.ClosePollRequest;
 import capstone.zephyr.zephyr.model.ShareholderModel;
+import capstone.zephyr.zephyr.requests.ClosePollRequest;
 import capstone.zephyr.zephyr.requests.CreatePollRequest;
 import capstone.zephyr.zephyr.requests.InputShareholdersRequest;
 import capstone.zephyr.zephyr.requests.LoginRequest;
@@ -97,11 +97,8 @@ public class APIController {
 
     @PostMapping("/createPoll")
     @ResponseBody
-    public APIRequests createPoll(@RequestBody CreatePollRequest request,
-                                  @AuthenticationPrincipal LoginModel login) {
-        if (login.isAdmin()
-            && accessDatabase.createPoll(request.getPollName(), request.getCompanyName(),
-                                         request.getParameterNames())) {
+    public APIRequests createPoll(@RequestBody CreatePollRequest request, @AuthenticationPrincipal LoginModel login) {
+        if (login.isAdmin() && accessDatabase.createPoll(request.getPollName(), request.getCompanyName(), request.getParameterNames())) {
             return new APIRequests(true, "Successfully added new Poll");
         }
         else {
@@ -111,8 +108,7 @@ public class APIController {
 
     @PostMapping("/closePoll")
     @ResponseBody
-    public APIRequests closePoll(@RequestBody ClosePollRequest request,
-                                 @AuthenticationPrincipal LoginModel login) {
+    public APIRequests closePoll(@RequestBody ClosePollRequest request, @AuthenticationPrincipal LoginModel login) {
         if (login.isAdmin() && accessDatabase.closePoll(request.getPollID())) {
             return new APIRequests(true, "Successfully closed poll");
         } else {
