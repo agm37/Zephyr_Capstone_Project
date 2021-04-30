@@ -16,6 +16,12 @@ function App() {
 
                     <Route
                         exact
+                        path="/"
+                        render={() => (<Redirect to="/login" />)}
+                    />
+
+                    <Route
+                        exact
                         path="/newpoll"
                         component={NewPollPage}
 
@@ -30,12 +36,6 @@ function App() {
                         exact
                         path="/votingresults/:pollID"
                         component={VotingResults} />
-
-                    {/* <Route
-                        exact
-                        path="/"
-                        render={() => (<Redirect to="/login" />)}
-                    /> */}
 
                     <Route
                         exact
