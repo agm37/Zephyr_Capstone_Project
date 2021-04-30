@@ -82,6 +82,10 @@ class Dashboard extends Component {
     }
 
     async handleClose(event) {
+        if (!window.confirm('Are you sure you want to close the poll?')) {
+            return;
+        }
+
         let closeResponse = await fetch(`${process.env.REACT_APP_SERVER}/closePoll`, {
             method: 'POST',
             headers: {
