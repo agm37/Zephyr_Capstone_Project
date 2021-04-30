@@ -135,6 +135,19 @@ class Dashboard extends Component {
         return this.state.status !== Status.IDLE;
     }
 
+    renderShareholderInfo() {
+        if (this.state.shareholderInfo.length === 0) {
+            return [];
+        }
+
+        return (
+            <p>
+                You have {this.state.shareholderInfo[2]} share(s)
+                in {this.state.shareholderInfo[1]}
+            </p>
+        );
+    }
+
     renderAdminOnlyControls() {
         if (!this.state.isAdmin) {
             return [];
@@ -222,6 +235,7 @@ class Dashboard extends Component {
                     this.state.shareholderInfo.length ? `, ${this.state.shareholderInfo[0]}` : ''
                 }!</h2>
 
+                {this.renderShareholderInfo()}
                 {this.renderAdminOnlyControls()}
 
                 {this.state.uploadSuccess !== null
