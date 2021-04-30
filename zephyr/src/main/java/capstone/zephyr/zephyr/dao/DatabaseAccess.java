@@ -230,8 +230,7 @@ public class DatabaseAccess {
 
         int rowsAffected = databaseTemplate.update(
             (Connection connection) -> {
-                PreparedStatement sqlInsert = connection.prepareStatement(
-                    sqlString, Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement sqlInsert = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
                 sqlInsert.setString(1, pollName);
                 sqlInsert.setString(2, companyName);
                 return sqlInsert;
