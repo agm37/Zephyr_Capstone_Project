@@ -1,7 +1,6 @@
 @ECHO OFF
 CD ..
 CD zephyr-frontend
-npm install
-npm start
+CALL npm install
+CALL npm start
 pause
-cmd /k startFrontend
