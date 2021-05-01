@@ -57,7 +57,7 @@ For deployment and use of the project, the database, frontend, and backend are r
     https://zephyr.refi64.com
     ```
     
-To use this demo, the default credentials have been kept to allow one to traverse the web application and to test the overall functionality. A stock CSV File has been added to allow the use of these user credentials, to test more than one user, open the CSV File located in the "Scripts" folder and choose a name along with thier default password. A few credentials are as follows (case sensitive):
+To use this demo, the default credentials have been kept to allow one to traverse the web application and to test the overall functionality. A stock CSV File has been added to allow the use of these user credentials, to test more than one user, open the CSV File located in the "Scripts" folder and choose a name along with their default password. A few credentials are as follows (case sensitive):
     
 | Account Type | UserName | Password |
 | ------ | ------ | ------ |
