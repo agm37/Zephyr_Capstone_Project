@@ -61,6 +61,9 @@ In order to run locally, you need:
 
 - Node 12
 - JDK 15
+  - On Windows, JAVA_HOME *must* be set to the path to your JDK in order for `mvnw` to work.
+    This is not required on most Linux distributions, but in that case, the `java` executable
+    itself should be on your system PATH.
 - A running MySQL database
 
 ### Setting up the database
