@@ -56,6 +56,8 @@ For deployment and use of the project, the database, frontend, and backend are r
     ```
     https://zephyr.refi64.com
     ```
+
+To run the application, traverse (cd) into the "zephyr" folder and type "mvnw package" into the command prompt. This will create a .jar file in a "target" folder. Then, type into the command prompt "java -jar target/<name_of_file>.jar and it will start the application. After that, navigate to the "zephyr-frontend" folder and type "npm install", let it do its thing. Afterwards, type "npm start" and the front-end will compile and bring up the webpage.
     
 To use this demo, the default credentials have been kept to allow one to traverse the web application and to test the overall functionality. A stock CSV File has been added to allow the use of these user credentials, to test more than one user, open the CSV File located in the "Scripts" folder and choose a name along with their default password. A few credentials are as follows (case sensitive):
     
