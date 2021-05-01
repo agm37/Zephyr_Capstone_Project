@@ -2,10 +2,10 @@
 
 ## Project Contents
 All necessary and related files for the Zephyr Project are located within the “Zephyr Capstone Project” folder.
-	
+
 - zephyr-frontend/: The “zephyr-frontend” folder contains all the source code, inside “src”, for the front-end actions and functionality, as well as all the dependencies and modules necessary for the front-end to operate (within the “node-modules” folder). The “public” folder contains the files for displaying images and icons on the front-end.
 
-- zephyr/: The “zephyr” folder contains all source code files and dependencies necessary for the backend of the project to start and execute actions. The source code files can be found in “src”, which contain “main/java/capstone/zephyr/zephyr” and the packages that the project uses, namely “api”, “dao”, “model”, “requests”, and “security”, as well as the start file for the application “ZephyrApplication”. 
+- zephyr/: The “zephyr” folder contains all source code files and dependencies necessary for the backend of the project to start and execute actions. The source code files can be found in “src”, which contain “main/java/capstone/zephyr/zephyr” and the packages that the project uses, namely “api”, “dao”, “model”, “requests”, and “security”, as well as the start file for the application “ZephyrApplication”.
 
 - scripts/: This folder contains scripts such as the database creation script.
 
@@ -52,20 +52,71 @@ For this project, our team collectively chose to use the Agile Software Developm
 | ![11](https://user-images.githubusercontent.com/42798640/116767188-2e5ea100-a9f4-11eb-9b06-fe52a9b0d81e.png) ![10](https://user-images.githubusercontent.com/42798640/116767124-abd5e180-a9f3-11eb-8d9e-0ebbbebcc52f.png) | Viewing a closed poll, you will be presented with a pie graph of all choices in the polls and the amount of votes they received. Hovering over a section shows the exact number of votes cast. (This is the result of the “Test poll”, as seen in the Closed Poll section). |
 
 ## Deployment/Installation Instructions
-For deployment and use of the project, the database, frontend, and backend are remotely hosted and a demo can easily be found by going to the following web address: 
-    ```
-    https://zephyr.refi64.com
-    ```
 
-To run the application, traverse (cd) into the "zephyr" folder and type "mvnw package" into the command prompt. This will create a .jar file in a "target" folder. Then, type into the command prompt "java -jar target/<name_of_file>.jar and it will start the application. After that, navigate to the "zephyr-frontend" folder and type "npm install", let it do its thing. Afterwards, type "npm start" and the front-end will compile and bring up the webpage.
-    
+For deployment and use of the project, the database, frontend, and backend are remotely hosted, and a demo can easily be found by going to the following web address:
+
+    https://zephyr.refi64.com
+
+In order to run locally, you need:
+
+- Node 12
+- JDK 15
+- A running MySQL database
+
+### Setting up the database
+
+Run the `Scripts/DatabaseCreationScript.sql` against the MySQL database to set up the initial database
+tables. In addition, the database URL and credentials must be placed inside
+`zephyr/src/main/secret.properties`; see `secret.ex.properties` in the same folder as an example.
+
+Note that the `secret.properties` to access our hosted database has been provided in the Google Drive
+submission.
+
+### Configuring the backend
+
+By default, the backend assumes that the frontend will be on `http://localhost:3000` (which will be
+the case if following the directions below). If this should be changed, edit
+`zephyr/src/main/application.properties`, setting `app.cors.allowed-origins` to the correct frontend URL.
+Note that this URL should not contain any trailing slashes.
+
+### Running the backend
+
+To run the backend, `cd` into the `zephyr` folder and run `mvnw package`. This will create
+a .jar file named `zephyr-0.0.1-SNAPSHOT.jar` in the `target` folder. The .jar file can now be
+run using `java -jar target/zephyr-0.0.1-SNAPSHOT.jar`.
+
+#### Windows premade startup script
+
+A premade batch file has been provided to start the backend server on Windows. Simply run
+`startBackend.bat` from the `Scripts` folder.
+
+### Configuring the frontend
+
+By default, the frontend assumes that the backend is running on `http://localhost:8080` (which will
+be the case if following the directions above). If this should be changed, edit
+`zephyr-frontend/.env`, setting `REACT_APP_SERVER` to the base URL of the server. Note that this URL
+should not contain any trailing slashes.
+
+### Running the frontend
+
+To run the frontend, `cd` into the `zephyr-frontend` folder and run `npm install` to download the
+dependencies. Once this has completed, `npm start` will build a development version, start a
+local webserver on port `3000`, and open the URL in the browser.
+
+In order to perform a release build, run `npm run build`. This will build the frontend and place
+the static files in the `zephyr-frontend/build` directory, where they can be placed on the desired
+hosting platform.
+
+#### Windows premade startup script
+
+A premade batch file has been provided to start the frontend dev server on Windows. Simply run
+`startFrontend.bat` from the `Scripts` folder.
+
+### Credentials
+
 To use this demo, the default credentials have been kept to allow one to traverse the web application and to test the overall functionality. A stock CSV File has been added to allow the use of these user credentials, to test more than one user, open the CSV File located in the "Scripts" folder and choose a name along with their default password. A few credentials are as follows (case sensitive):
-    
+
 | Account Type | UserName | Password |
 | ------ | ------ | ------ |
 | Administrator | admin | 1admin |
 | User | Amare Small | rdasda |
-
-Alternatively, we provided a script to install the application, the “ZephyrInstallation” script inside the “Scripts” folder. This will open a command prompt to download and install the necessary files for running the application in your environment, and will then run the application. In this use/configuration, the remote database is no longer configured in the “Secret.properties” file, but a database creation script has also been provided inside the “Scripts” folder. There is also a stock CSV File that would allow the import of Shareholders into a local database, though this CSV is already loaded into our remote database.
-
-- One important note, if you were to clone the repository, the “Secret.properties” file would need to be configured to either use the locally created database or to use our remote database. The “Secret.properties” file contains the plaintext password and address for the remote database and as such is not located in the public Git repository, but the file containing our remote database information has been submitted with the Documentation and Hard Copies.
