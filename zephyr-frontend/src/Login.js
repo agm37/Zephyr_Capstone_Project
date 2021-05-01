@@ -15,6 +15,8 @@ class Login extends Component {
             password: '',
          };
 
+
+
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
@@ -24,29 +26,30 @@ class Login extends Component {
         event.preventDefault();
         event.stopPropagation();
 
-        console.log("username:" + this.state.username)
-
         let result;
         try {
             let response = await fetch(`${process.env.REACT_APP_SERVER}/authentication`, {  //not sure this is the correct route
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+
                 },
                 body: JSON.stringify({
                     username: this.state.username,
                     password: this.state.password
-                })
+                }),
+                credentials: 'include',
             })
 
             let content = await response.json()
-            console.log(content);
             result = content.response ? LoginResult.SUCCESS : LoginResult.FAILURE;
         } catch (ex) {
             result = LoginResult.ERROR;
             console.error(ex);
         }
+
+
 
         this.props.onLoginResult(result);
     }
@@ -62,14 +65,14 @@ class Login extends Component {
                 <h1>
                     Login
                 </h1>
-                <div class="form-input-wrapper">
-                    <label for="username">Username</label>
+                <div className="form-input-wrapper">
+                    <label htmlFor="username">Username</label>
                     <input
                         data-testid="username" name="username" type="text"
                         value={this.state.username} required onChange={this.handleChange} />
                 </div>
-                <div class="form-input-wrapper">
-                    <label for="password">Password</label>
+                <div className="form-input-wrapper">
+                    <label htmlFor="password">Password</label>
                     <input
                         data-testid="password" name="password" type="password"
                         value={this.state.password} required onChange={this.handleChange} />

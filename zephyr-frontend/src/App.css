@@ -5,14 +5,8 @@
 }
 
 .App-logo {
-    height: 40vmin;
+    height: 25vmin;
     pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
 }
 
 button,
@@ -36,6 +30,44 @@ input[type='submit']:active {
     background-color: #006433;
 }
 
+button:disabled {
+    background-color: gray;
+    filter: brightness(50%);
+}
+
+button.button-round {
+    background-color: transparent;
+    border: solid #014222 2px;
+    width: 48px;
+    height: 48px;
+    border-radius: 100%;
+    padding: 0;
+}
+
+button.button-round:hover {
+    border-color: #005229;
+}
+
+button.button-round:active {
+    border-color: #006433;
+}
+
+button.button-round:disabled {
+    border-color: gray;
+}
+
+button.button-round.button-small {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    margin: 8px;
+}
+
+a,
+a:visited {
+    color: #579aff;
+}
+
 .form-input-wrapper {
     display: flex;
     flex-direction: row;
@@ -55,16 +87,22 @@ input[type='submit']:active {
     padding: 8px;
 }
 
-.App-header {
-    background-color: #15171c;
+.middle-align {
+    vertical-align: middle;
+}
+
+.App {
+    padding: 72px;
     min-height: 100vh;
+    box-sizing: border-box;
+    background-color: #15171c;
+    font-size: calc(10px + 2vmin);
+    color: white;
+    font-family: Nunito, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-    font-family: Nunito, sans-serif;
 }
 
 .App-header h1 {
@@ -75,11 +113,32 @@ input[type='submit']:active {
     color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.NewPoll-parameters {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.NewPoll-parameters h3 {
+    margin-bottom: 8px;
+}
+
+.NewPoll-delete {
+    margin-right: -38px !important;
+}
+
+.NewPoll-delete:disabled {
+    visibility: hidden;
+}
+
+.VotingPage-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.VotingPage-choices {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
 }

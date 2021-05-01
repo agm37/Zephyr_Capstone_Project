@@ -1,22 +1,35 @@
 package capstone.zephyr.zephyr.api;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import java.util.ArrayList;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import capstone.zephyr.zephyr.doa.DatabaseAccess;
-import capstone.zephyr.zephyr.doa.LoginRequest;
-import capstone.zephyr.zephyr.doa.VotingRequest;
+import capstone.zephyr.zephyr.dao.DatabaseAccess;
+import capstone.zephyr.zephyr.model.LoginModel;
+import capstone.zephyr.zephyr.model.PollMetadataModel;
+import capstone.zephyr.zephyr.model.ShareholderModel;
+import capstone.zephyr.zephyr.requests.ClosePollRequest;
+import capstone.zephyr.zephyr.requests.CreatePollRequest;
+import capstone.zephyr.zephyr.requests.LoginRequest;
+import capstone.zephyr.zephyr.requests.PollInfoRequest;
+import capstone.zephyr.zephyr.requests.ShareholderVotingRequest;
+
 
 @Controller
 public class APIController {
@@ -24,58 +37,153 @@ public class APIController {
     @Autowired
     private DatabaseAccess accessDatabase;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @PostMapping("/authentication")
     @ResponseBody
     public APIRequests authenticate(@RequestBody LoginRequest request) {
-        boolean response = false;
-        String message = "Not authenticated";
-
-        int authenticatePassword = accessDatabase.queryPasswordAuthenticate(request.getPassword());
-
-        if (authenticatePassword == 1) {
-            response = true;
-            message = "Successfully authenticated";
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword());
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(token);
+        } catch (AuthenticationException ex) {
+            ex.printStackTrace();
+            SecurityContextHolder.clearContext();
+            return new APIRequests(false, "Not authenticated");
         }
-        return new APIRequests(response, message);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return new APIRequests(true, "Successfully authenticated");
+    }
+
+    @GetMapping("/checkAdmin")
+    @ResponseBody
+    public int checkAdminStatus(@AuthenticationPrincipal LoginModel login) {
+        return accessDatabase.queryAdminStatus(login.getUsername());
+    }
+
+    @GetMapping("/getNumShares")
+    @ResponseBody
+    public int getNumberOfShares(@AuthenticationPrincipal LoginModel login) {
+        if (login.getShareholderID().isEmpty()) {
+            return 0;
+        }
+        return accessDatabase.queryShareholderShares(login.getShareholderID().get());
+    }
+
+    @GetMapping("/getShareholderInfo")
+    @ResponseBody
+    public List<Object> getShareholderInfo(@AuthenticationPrincipal LoginModel login) {
+        List<Object> results = new ArrayList<>();
+
+        if (login.getShareholderID().isPresent()) {
+            int shareholderID = login.getShareholderID().get();
+            results.add(accessDatabase.queryShareholderName(shareholderID));
+            results.add(accessDatabase.queryShareholderCompany(shareholderID));
+            results.add(accessDatabase.queryShareholderShares(shareholderID));
+        }
+        return results;
+    }
+
+    @GetMapping("/listPolls")
+    @ResponseBody
+    public List<PollMetadataModel> listPolls(@AuthenticationPrincipal LoginModel login) {
+        if (login.getShareholderID().isPresent()) {
+            return accessDatabase.queryAllPollsAndVoteStatus(login.getShareholderID().get());
+        } else {
+            return accessDatabase.queryAllPolls();
+        }
     }
 
     @PostMapping("/pollInfo")
     @ResponseBody
-    public APIRequests getPollInfo(@RequestBody VotingRequest request) {
+    public APIRequests getPollInfo(@RequestBody PollInfoRequest request) {
         ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(request.getPollID());
-        ArrayList<Integer> voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
+        ArrayList<Integer> voteCountResponse = new ArrayList<Integer>();
+
+        if (accessDatabase.queryIsPollClosed(request.getPollID()) == true) {
+            voteCountResponse = accessDatabase.queryVoteCount(request.getPollID());
+        }
 
         return new APIRequests(parameterResponse, voteCountResponse);
     }
 
-    @RequestMapping("/hello")
-    public String hello(@CookieValue(value = "hitCounter", defaultValue = "0") Long hitCounter, HttpServletResponse response) {
-        hitCounter++;
-
-        Cookie cookie = new Cookie("hitCounter", hitCounter.toString());
-        response.addCookie(cookie);
-
-        return "I AM RESPONDING";
+    @PostMapping("/parameterInfo")
+    @ResponseBody
+    public ArrayList<String> getPollInfo(@RequestBody int pollID) {
+        ArrayList<String> parameterResponse = accessDatabase.queryVoteParameter(pollID);
+        return parameterResponse;
     }
 
+    @PostMapping("/createPoll")
+    @ResponseBody
+    public APIRequests createPoll(@RequestBody CreatePollRequest request, @AuthenticationPrincipal LoginModel login) {
+        if (login.isAdmin() && accessDatabase.createPoll(request.getPollName(), request.getCompanyName(), request.getParameterNames())) {
+            return new APIRequests(true, "Successfully added new Poll");
+        }
+        else {
+            return new APIRequests(false, "Failed to create new Poll");
+        }
+    }
 
+    @PostMapping("/closePoll")
+    @ResponseBody
+    public APIRequests closePoll(@RequestBody ClosePollRequest request, @AuthenticationPrincipal LoginModel login) {
+        if (login.isAdmin() && accessDatabase.closePoll(request.getPollID())) {
+            return new APIRequests(true, "Successfully closed poll");
+        } else {
+            return new APIRequests(false, "Failed to close poll");
+        }
+    }
 
-  //Test Code/Templates
-  /*
+    @PostMapping("/shareholderVote")
+    @ResponseBody
+    public APIRequests shareholderVoting(@RequestBody ShareholderVotingRequest request, @AuthenticationPrincipal LoginModel login) {
+        if (login.getShareholderID().isPresent()
+            && !accessDatabase.queryHasShareholderVotedInPoll(
+                    login.getShareholderID().get(), request.getPollID())) {
+            accessDatabase.recordShareholderVote(login.getShareholderID().get(), request.getPollID(), request.getParameterNum());
+            return new APIRequests(true, "Successfully added Votes to Poll");
+        } else {
+            return new APIRequests(false, "Failed to add Votes");
+        }
+    }
 
-  @GetMapping("/zephyr")
-  @ResponseBody
-  public APIRequests sayHello(@RequestParam(name="name", required=false, defaultValue="Stranger") String name) {
-    String template = "Hello, %s!";
-    return new APIRequests(counter.incrementAndGet(), String.format(template, name));
-  }
+    @PostMapping("/addShareholders")
+    @ResponseBody
+    public APIRequests addShareholders(@RequestParam("file") MultipartFile file,
+                                       @AuthenticationPrincipal LoginModel login) {
+        if (!login.isAdmin()) {
+            return new APIRequests(false, "Failed to add shareholders");
+        }
 
-  @GetMapping("/credentials/{name}")
-  @ResponseBody
-  public APIRequests returnCredentials(@PathVariable String name) {
-    String user_name = accessDatabase.queryUserName(name);
-    return new APIRequests(counter.incrementAndGet(), String.format(user_name));
-  }
+        String csvData;
+        try {
+            csvData = new String(file.getBytes());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return new APIRequests(false, "Failed to add shareholders");
+        }
 
-  */
+        ArrayList<ShareholderModel> shareholders = new ArrayList<>();
+
+        for (String line : csvData.split("\r\n")) {
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            String[] parsedLine = line.split(",");
+            shareholders.add(new ShareholderModel(
+                parsedLine[0], parsedLine[1],
+                Integer.parseInt(parsedLine[2]),
+                passwordEncoder.encode(parsedLine[3])));
+        }
+
+        accessDatabase.addShareholders(shareholders);
+        return new APIRequests(true, "Successfully added Shareholders");
+    }
 }

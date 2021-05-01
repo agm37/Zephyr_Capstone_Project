@@ -1,4 +1,4 @@
-package capstone.zephyr.zephyr.doa;
+package capstone.zephyr.zephyr.requests;
 
 public class LoginRequest {
 
