@@ -113,7 +113,7 @@ hosting platform.
 #### Windows and Linux premade startup scripts
 
 Premade scripts have been provided to start the frontend dev server on Windows and Linux. Simply run
-`startFrontend.bat` or `./startFronted.sh` from the `Scripts` folder.
+`startFrontend.bat` or `./startFrontend.sh` from the `Scripts` folder.
 
 ### Credentials
 
