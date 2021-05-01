@@ -7,7 +7,7 @@ All necessary and related files for the Zephyr Project are located within the �
 
 - zephyr/: The “zephyr” folder contains all source code files and dependencies necessary for the backend of the project to start and execute actions. The source code files can be found in “src”, which contain “main/java/capstone/zephyr/zephyr” and the packages that the project uses, namely “api”, “dao”, “model”, “requests”, and “security”, as well as the start file for the application “ZephyrApplication”.
 
-- scripts/: This folder contains scripts such as the database creation script.
+- scripts/: This folder contains scripts such as the database creation script, and Windows/Linix backend and frontend startup scripts. 
 
 ## Executive Summary
 
