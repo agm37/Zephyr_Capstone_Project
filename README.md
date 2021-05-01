@@ -88,10 +88,10 @@ To run the backend, `cd` into the `zephyr` folder and run `mvnw package -Dmaven.
 a .jar file named `zephyr-0.0.1-SNAPSHOT.jar` in the `target` folder. The .jar file can now be
 run using `java -jar target/zephyr-0.0.1-SNAPSHOT.jar`.
 
-#### Windows premade startup script
+#### Windows and Linux premade startup scripts
 
-A premade batch file has been provided to start the backend server on Windows. Simply run
-`startBackend.bat` from the `Scripts` folder.
+Premade scripts have been provided to start the backend server on Windows and Linux. Simply run
+`startBackend.bat` or `./startBackend.sh` from the `Scripts` folder.
 
 ### Configuring the frontend
 
@@ -110,10 +110,10 @@ In order to perform a release build, run `npm run build`. This will build the fr
 the static files in the `zephyr-frontend/build` directory, where they can be placed on the desired
 hosting platform.
 
-#### Windows premade startup script
+#### Windows and Linux premade startup scripts
 
-A premade batch file has been provided to start the frontend dev server on Windows. Simply run
-`startFrontend.bat` from the `Scripts` folder.
+Premade scripts have been provided to start the frontend dev server on Windows and Linux. Simply run
+`startBackend.bat` or `./startBackend.sh` from the `Scripts` folder.
 
 ### Credentials
 

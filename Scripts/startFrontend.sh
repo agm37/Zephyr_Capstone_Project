@@ -1,6 +1,5 @@
- #!/bin/bash
- 
-CD ..
-CD zephyr-frontend
-CALL npm install
-CALL npm start
+#!/bin/bash
+
+cd "$(dirname "$0")/../zephyr-frontend"
+npm install
+npm start
