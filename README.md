@@ -57,13 +57,13 @@ For deployment and use of the project, the database, frontend, and backend are r
     https://zephyr.refi64.com
     ```
     
-To use this demo, the default credentials have been kept to allow one to traverse the web application and to test the overall functionality. The credentials are as follows (case sensitive):
+To use this demo, the default credentials have been kept to allow one to traverse the web application and to test the overall functionality. A stock CSV File has been added to allow the use of these user credentials, to test more than one user, open the CSV File located in the "Scripts" folder and choose a name along with thier default password. A few credentials are as follows (case sensitive):
     
 | Account Type | UserName | Password |
 | ------ | ------ | ------ |
 | Administrator | admin | 1admin |
 | User | Amare Small | rdasda |
 
-Alternatively, we provided a script to install the application, the “ZephyrInstallation” script inside the “Scripts” folder. This will open a command prompt to download and install the necessary files for running the application in your environment, and will then run the application. In this use/configuration, the remote database is no longer configured in the “Secret.properties” file, but a database creation script has also been provided inside the “Scripts” folder.
+Alternatively, we provided a script to install the application, the “ZephyrInstallation” script inside the “Scripts” folder. This will open a command prompt to download and install the necessary files for running the application in your environment, and will then run the application. In this use/configuration, the remote database is no longer configured in the “Secret.properties” file, but a database creation script has also been provided inside the “Scripts” folder. There is also a stock CSV File that would allow the import of Shareholders into a local database, though this CSV is already loaded into our remote database.
 
 - One important note, if you were to clone the repository, the “Secret.properties” file would need to be configured to either use the locally created database or to use our remote database. The “Secret.properties” file contains the plaintext password and address for the remote database and as such is not located in the public Git repository, but the file containing our remote database information has been submitted with the Documentation and Hard Copies.
