@@ -59,9 +59,9 @@ For deployment and use of the project, the database, frontend, and backend are r
     
 To use this demo, the default credentials have been kept to allow one to traverse the web application and to test the overall functionality. The credentials are as follows (case sensitive):
     
-|| UserName | Password |
+| Account Type | UserName | Password |
 | ------ | ------ | ------ |
-| Administrator Account: | admin | 1admin |
-| User Account: | Amare Small | rdasda |
+| Administrator | admin | 1admin |
+| User | Amare Small | rdasda |
 
 Alternatively, we provided a script to install the application, the “ZephyrInstallation” script inside the “Scripts” folder. This will open a command prompt to download and install the necessary files for running the application in your environment, and will then run the application. 
