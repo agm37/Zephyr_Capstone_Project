@@ -64,4 +64,6 @@ To use this demo, the default credentials have been kept to allow one to travers
 | Administrator | admin | 1admin |
 | User | Amare Small | rdasda |
 
-Alternatively, we provided a script to install the application, the “ZephyrInstallation” script inside the “Scripts” folder. This will open a command prompt to download and install the necessary files for running the application in your environment, and will then run the application. 
+Alternatively, we provided a script to install the application, the “ZephyrInstallation” script inside the “Scripts” folder. This will open a command prompt to download and install the necessary files for running the application in your environment, and will then run the application. In this use/configuration, the remote database is no longer configured in the “Secret.properties” file, but a database creation script has also been provided inside the “Scripts” folder.
+
+- One important note, if you were to clone the repository, the “Secret.properties” file would need to be configured to either use the locally created database or to use our remote database. The “Secret.properties” file contains the plaintext password and address for the remote database and as such is not located in the public Git repository, but the file containing our remote database information has been submitted with the Documentation and Hard Copies.
