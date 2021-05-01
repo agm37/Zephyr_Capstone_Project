@@ -57,7 +57,7 @@ For deployment and use of the project, the database, frontend, and backend are r
     https://zephyr.refi64.com
     ```
     
-To use this demo, the default credentials have been kept to allow one to traverse the web application and to test the overall functionality. The credentials are as followed (case sensitive):
+To use this demo, the default credentials have been kept to allow one to traverse the web application and to test the overall functionality. The credentials are as follows (case sensitive):
     
 | UserName | Password |
 | ------ | ------ |
