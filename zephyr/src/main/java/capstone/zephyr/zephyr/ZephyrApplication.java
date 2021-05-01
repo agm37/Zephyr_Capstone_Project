@@ -12,7 +12,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
-@PropertySource("classpath:secret.properties")
+@PropertySource(
+		value = "classpath:secret.properties", ignoreResourceNotFound = true)
 public class ZephyrApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ZephyrApplication.class, args);
