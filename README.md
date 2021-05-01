@@ -123,3 +123,5 @@ To use this demo, the default credentials have been kept to allow one to travers
 | ------ | ------ | ------ |
 | Administrator | admin | 1admin |
 | User | Amare Small | rdasda |
+| User | Mariela Vega | hbhjhb |
+| User | Jacob Forbes | iytio8o |
