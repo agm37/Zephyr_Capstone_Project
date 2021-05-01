@@ -37,7 +37,7 @@ For this project, our team collectively chose to use the Agile Software Developm
 - Implement a log system.
 - Polish Frontend and add more features for users
 
-## Manuals
+## Manual
 
 | Pictures | Description |
 | ------ | ------ |
