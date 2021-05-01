@@ -84,7 +84,7 @@ Note that this URL should not contain any trailing slashes.
 
 ### Running the backend
 
-To run the backend, `cd` into the `zephyr` folder and run `mvnw package`. This will create
+To run the backend, `cd` into the `zephyr` folder and run `mvnw package -Dmaven.test.skip=true`. This will create
 a .jar file named `zephyr-0.0.1-SNAPSHOT.jar` in the `target` folder. The .jar file can now be
 run using `java -jar target/zephyr-0.0.1-SNAPSHOT.jar`.
 
